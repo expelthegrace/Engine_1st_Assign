@@ -20,6 +20,8 @@ public:
 	bool CleanUp();
 	void WindowResized(unsigned width, unsigned height);
 
+	math::float4x4 model; 
+
 	void* context;
 private:
 	

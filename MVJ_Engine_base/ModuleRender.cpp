@@ -6,6 +6,9 @@
 #include "GL/glew.h"
 #include "MathGeoLib.h"
 #include "ModuleRenderExercise.h"
+#include "ModuleModelLoader.h"
+#include "ModuleProgram.h"
+#include "ModuleCamera.h"
 
 ModuleRender::ModuleRender()
 {
@@ -46,6 +49,9 @@ bool ModuleRender::Init()
     SDL_GetWindowSize(App->window->window, &width, &height);
     glViewport(0, 0, width, height);
 
+
+	model = math::float4x4::identity;
+
 	return true;
 }
 
@@ -59,6 +65,22 @@ update_status ModuleRender::PreUpdate()
 // Called every draw update
 update_status ModuleRender::Update()
 {
+	glUseProgram(App->shaderProgram->program);
+
+	glUniformMatrix4fv(glGetUniformLocation(App->shaderProgram->program,
+		"model"), 1, GL_TRUE, &model[0][0]);
+	glUniformMatrix4fv(glGetUniformLocation(App->shaderProgram->program,
+		"view"), 1, GL_TRUE, &App->camera->view[0][0]);
+	glUniformMatrix4fv(glGetUniformLocation(App->shaderProgram->program,
+		"proj"), 1, GL_TRUE, &App->camera->projection[0][0]);
+
+	for (int i = 0; i < App->modelLoader->scene->mNumMeshes; ++i) {
+	
+		glBindBuffer(GL_ARRAY_BUFFER, App->modelLoader->vbos[i]);
+		//glDrawElements()
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+	}
+
 
 	return UPDATE_CONTINUE;
 }

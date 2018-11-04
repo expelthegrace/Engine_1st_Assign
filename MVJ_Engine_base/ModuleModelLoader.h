@@ -19,7 +19,9 @@ public:
 	//bool            CleanUp();
 
 	unsigned GenerateMeshData(const aiMesh* mesh);
+	unsigned GenerateMeshIndexes(const aiMesh* mesh);
 	unsigned* vbos;
+	unsigned* ibos;
 
 	const aiScene* scene;
 
