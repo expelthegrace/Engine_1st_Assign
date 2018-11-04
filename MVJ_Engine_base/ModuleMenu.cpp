@@ -31,10 +31,11 @@ bool ModuleMenu::Init() {
 	ms_log = new float[50];
 	lastFrameTime = SDL_GetTicks();
 	lastSecondTime = SDL_GetTicks();
-	console.AddLog("Console log:\n");
+	console.AddLog("Model geometry:\n");
 	
 	return true;
 }
+
 void ModuleMenu::updateFramerates() {
 	double timeElapsed = SDL_GetTicks() - lastSecondTime;
 	//fps calculation
@@ -88,6 +89,20 @@ update_status ModuleMenu::Update() {
 			}
 			ImGui::EndMainMenuBar();
 		}
+
+		ImGui::Spacing();
+		if (ImGui::CollapsingHeader("Configuration"))
+		{
+			ImGui::Text("Application Time = %d", SDL_GetTicks() / 1000);
+			char* title = new char[50];
+			updateFramerates();
+			sprintf_s(title, 50, "Framerate %.1f", fps_log[logFPSIterator]);
+			ImGui::PlotHistogram("", fps_log, 50, 0, title, 0.0f, 100.0f, ImVec2(350, 100));
+			sprintf_s(title, 50, "Milliseconds %.1f", ms_log[logMSIterator]);
+			ImGui::PlotHistogram("", ms_log, 50, 0, title, 0.0f, 100.0f, ImVec2(350, 100));
+		}
+
+		/*
 		ImGui::Spacing();
 		if (ImGui::CollapsingHeader("About"))
 		{
@@ -115,7 +130,7 @@ update_status ModuleMenu::Update() {
 		
 		//going over all the menus
 		//App info
-		if (ImGui::CollapsingHeader("Application details"))
+		if (ImGui::CollapsingHeader("Configuration"))
 		{
 			ImGui::Text("Application Time = %d", SDL_GetTicks()/1000);
 			char* title = new char[50];
@@ -175,7 +190,7 @@ update_status ModuleMenu::Update() {
 		{
 			ImGui::Text("Not much to be shown about this module yet.");
 		}
-		
+		*/
 	}
 	console.Draw("Console");
 

@@ -4,6 +4,8 @@
 #include "GL/glew.h"
 #include "SDL.h"
 #include "MathGeoLib.h"
+#include "ModuleMenu.h"
+#include "Application.h"
 
 
 ModuleModelLoader::ModuleModelLoader()
@@ -19,6 +21,8 @@ ModuleModelLoader::~ModuleModelLoader()
 //li entra un punter a la mesh n
 unsigned ModuleModelLoader::GenerateMeshData(const aiMesh* mesh) {
 	
+	numVertices += mesh->mNumVertices;
+
 	unsigned vbo = 0;
 
 	glGenBuffers(1, &vbo);
@@ -36,6 +40,8 @@ unsigned ModuleModelLoader::GenerateMeshData(const aiMesh* mesh) {
 }
 
 unsigned ModuleModelLoader::GenerateMeshIndexes(const aiMesh* mesh) {
+	
+	numFaces += mesh->mNumFaces;
 
 	assert(mesh->mFaces->mNumIndices == 3);
 
@@ -50,6 +56,8 @@ unsigned ModuleModelLoader::GenerateMeshIndexes(const aiMesh* mesh) {
 
 bool ModuleModelLoader::Init() {
 
+	numMeshes = 0;
+
 	scene = aiImportFile("BakerHouse.fbx", 0);
 	const char* errorMesage;
 
@@ -58,6 +66,10 @@ bool ModuleModelLoader::Init() {
 		LOG(errorMesage);
 	}
 	else {
+		numMeshes = scene->mNumMeshes;
+		numVertices = 0;
+		numFaces = 0;
+
 		vbos = new unsigned[scene->mNumMeshes];
 		ibos = new unsigned[scene->mNumMeshes];
 
@@ -68,5 +80,14 @@ bool ModuleModelLoader::Init() {
 		}
 
 	}
+
+	//Console data update
+	char* b = new char[50];
+	sprintf(b, "Number of meshes: %u \n", numMeshes);
+	App->menu->console.AddLog(b);
+	sprintf(b, "Number of vertices: %u \n", numVertices);
+	App->menu->console.AddLog(b);
+	sprintf(b, "Number of faces: %u \n", numFaces);
+	App->menu->console.AddLog(b);
 	return true;
 }

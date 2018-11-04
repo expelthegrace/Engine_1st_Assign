@@ -23,6 +23,10 @@ public:
 	unsigned* vbos;
 	unsigned* ibos;
 
+	unsigned numMeshes;
+	unsigned numVertices;
+	unsigned numFaces;
+
 	const aiScene* scene;
 
 };
