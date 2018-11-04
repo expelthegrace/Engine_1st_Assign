@@ -80,7 +80,7 @@ int main(int argc, char ** argv)
 			break;
 
 		}
-
+		/*
 		SDL_Event sdlEvent;
 
 		while (SDL_PollEvent(&sdlEvent) != 0)
@@ -97,7 +97,7 @@ int main(int argc, char ** argv)
 					App->renderer->WindowResized(sdlEvent.window.data1, sdlEvent.window.data2);
 					break;
 			}
-		}
+		}*/
 	}
 
 	delete App;
