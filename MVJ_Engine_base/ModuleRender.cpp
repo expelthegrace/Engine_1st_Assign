@@ -65,6 +65,7 @@ update_status ModuleRender::PreUpdate()
 // Called every draw update
 update_status ModuleRender::Update()
 {
+	
 	glUseProgram(App->shaderProgram->program);
 
 	glUniformMatrix4fv(glGetUniformLocation(App->shaderProgram->program,
@@ -76,11 +77,44 @@ update_status ModuleRender::Update()
 
 	for (int i = 0; i < App->modelLoader->scene->mNumMeshes; ++i) {
 	
+
+		/*unsigned vboActual = App->modelLoader->vbos[i];
+		unsigned numVerticesActual = App->modelLoader->numVerticesMesh[i];
+		unsigned numIndexesActual = App->modelLoader->numIndexesMesh[i];
+*/
+
+		glEnableVertexAttribArray(0);
+		glEnableVertexAttribArray(1);
 		glBindBuffer(GL_ARRAY_BUFFER, App->modelLoader->vbos[i]);
-		//glDrawElements()
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)(sizeof(float) * 3 * App->modelLoader->numVerticesMesh[i]));
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, App->modelLoader->ibos[i]);
+		glDrawElements(GL_TRIANGLES, App->modelLoader->numIndexesMesh[i], GL_UNSIGNED_INT, nullptr);
+
+		glDisableVertexAttribArray(0);
+		glDisableVertexAttribArray(1);
+
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindTexture(GL_TEXTURE_2D, 0);
+		
 	}
 
+	glUseProgram(0);
+
+	/*
+	glLineWidth(1.0f);
+
+	glBegin(GL_LINES);
+	float d = 200.f;
+
+	for (float i = -d; i <= d; i += 1.0f) {
+		glVertex3f(i, 0.0f, -d);
+		glVertex3f(i, 0.0f, d);
+		glVertex3f(-d, 0.0f, i);
+		glVertex3f(d, 0.0f, i);
+	}
+	glEnd();*/
 
 	return UPDATE_CONTINUE;
 }

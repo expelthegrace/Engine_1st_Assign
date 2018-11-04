@@ -18,14 +18,23 @@ public:
 	//update_status   Update();
 	//bool            CleanUp();
 
-	unsigned GenerateMeshData(const aiMesh* mesh);
-	unsigned GenerateMeshIndexes(const aiMesh* mesh);
+	unsigned GenerateMeshData(const aiMesh* mesh, const unsigned iVbo);
+	unsigned GenerateMeshIndexes(const aiMesh* mesh, const unsigned i);
+
 	unsigned* vbos;
 	unsigned* ibos;
+	unsigned* materials;
+	unsigned*  numVerticesMesh;
+	unsigned*  numIndexesMesh;
+
+
+	char* b = new char[50];
 
 	unsigned numMeshes;
 	unsigned numVertices;
 	unsigned numFaces;
+
+	unsigned texture0;
 
 	const aiScene* scene;
 
