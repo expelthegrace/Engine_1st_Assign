@@ -9,6 +9,7 @@
 #include "ModuleMenu.h"
 #include "ModuleCamera.h"
 #include "ModuleModelLoader.h"
+#include "ModuleTimer.h"
 
 
 using namespace std;
@@ -24,6 +25,7 @@ Application::Application()
 	modules.push_back(textures = new ModuleTextures());
 	modules.push_back(modelLoader = new ModuleModelLoader());
 	modules.push_back(shaderProgram = new ModuleProgram());
+	modules.push_back(timer = new ModuleTimer);
 	
 	//modules.push_back(exercise = new ModuleRenderExercise());
 	
@@ -41,18 +43,10 @@ Application::~Application()
 bool Application::Init()
 {
 	bool ret = true;
-	timer = new Timer();
-
-	timer->Start();
 
 	for(list<Module*>::iterator it = modules.begin(); it != modules.end() && ret; ++it)
 		ret = (*it)->Init();
-
-	float tempsInit = timer->Stop();
-
-	char* b = new char[50];
-	sprintf(b, "All Inits called in %f seconds \n", tempsInit);
-	App->menu->console.AddLog(b);
+	
 
 	return ret;
 }
