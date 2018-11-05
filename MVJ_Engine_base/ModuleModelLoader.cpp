@@ -154,7 +154,6 @@ void ModuleModelLoader::GenerateMaterials(const aiScene* scene)
 	{
 		const aiMaterial* src_material = scene->mMaterials[i];
 		unsigned dst_material;
-		//Material dst_material;
 
 		aiString file;
 		aiTextureMapping mapping;

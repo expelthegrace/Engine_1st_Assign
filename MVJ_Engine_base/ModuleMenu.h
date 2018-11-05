@@ -53,6 +53,8 @@ public:
 	float* fps_log;
 	float* ms_log;
 	ExampleAppLog console;
+
+	bool showWindows;
 private:
 	void updateFramerates();
 };

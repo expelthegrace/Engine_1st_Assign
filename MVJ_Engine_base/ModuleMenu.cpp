@@ -33,6 +33,8 @@ bool ModuleMenu::Init() {
 	lastSecondTime = SDL_GetTicks();
 	console.AddLog("Model geometry:\n");
 	
+	showWindows = true;
+
 	return true;
 }
 
@@ -59,39 +61,59 @@ update_status ModuleMenu::PreUpdate() {
 }
 
 update_status ModuleMenu::Update() {
-	bool show_demo_window = false;
-	if (show_demo_window)ImGui::ShowDemoWindow(&show_demo_window);
 	
-	else{
-		// Menu
-		if (ImGui::BeginMainMenuBar())
+	int consoleHeight = SCREEN_HEIGHT * 1.f/4;
+	ImVec2 mainMenuSize;
+	// Menu superior
+	if (ImGui::BeginMainMenuBar())
+	{
+		mainMenuSize = ImGui::GetWindowSize();
+		if (ImGui::BeginMenu("Menu"))
 		{
-			if (ImGui::BeginMenu("Menu"))
+			if (ImGui::CollapsingHeader("Window options"))
 			{
-				ImGui::Text("Menu");
-				ImGui::EndMenu();
+				ImGui::Checkbox("Show windows", &showWindows); ImGui::SameLine(150);
 			}
-			if (ImGui::BeginMenu("Help"))
-			{
-				if (ImGui::Button("Documentation")) {
-					ShellExecute(NULL, "open", "https://github.com/RogerNogue/MVJ_Engine_base/wiki", NULL, NULL, SW_SHOWNORMAL);
-				}
-				if (ImGui::Button("Download latest")) {
-					ShellExecute(NULL, "open", "https://github.com/RogerNogue/MVJ_Engine_base/releases", NULL, NULL, SW_SHOWNORMAL);
-				}
-				if (ImGui::Button("Report a bug")) {
-					ShellExecute(NULL, "open", "https://github.com/RogerNogue/MVJ_Engine_base/issues", NULL, NULL, SW_SHOWNORMAL);
-				}
-				ImGui::EndMenu();
+
+			if (ImGui::Button("Go to GitHub")) {
+				ShellExecute(NULL, "open", "https://github.com/expelthegrace/Engine_1st_Assign", NULL, NULL, SW_SHOWNORMAL);
 			}
-			if (ImGui::BeginMenu("Exit")) {
-				return UPDATE_STOP;
-			}
-			ImGui::EndMainMenuBar();
+
+			ImGui::EndMenu();
+		}
+		if (ImGui::Button("Quit")) {
+			return UPDATE_STOP;
 		}
 
-		ImGui::Spacing();
-		if (ImGui::CollapsingHeader("Configuration"))
+		ImGui::EndMainMenuBar();
+		/*
+		if (ImGui::BeginMenu("Help"))
+		{
+			if (ImGui::Button("Documentation")) {
+				ShellExecute(NULL, "open", "https://github.com/RogerNogue/MVJ_Engine_base/wiki", NULL, NULL, SW_SHOWNORMAL);
+			}
+			if (ImGui::Button("Download latest")) {
+				ShellExecute(NULL, "open", "https://github.com/RogerNogue/MVJ_Engine_base/releases", NULL, NULL, SW_SHOWNORMAL);
+			}
+			if (ImGui::Button("Report a bug")) {
+				ShellExecute(NULL, "open", "https://github.com/RogerNogue/MVJ_Engine_base/issues", NULL, NULL, SW_SHOWNORMAL);
+			}
+			ImGui::EndMenu();
+		}
+		*/		
+	}
+
+	if (showWindows) {
+		ImGui::SetNextWindowPos(ImVec2(0, SCREEN_HEIGHT - consoleHeight), ImGuiCond_FirstUseEver);
+		ImGui::SetNextWindowSize(ImVec2(SCREEN_WIDTH / 2, consoleHeight), ImGuiCond_FirstUseEver);
+
+		console.Draw("Console");
+
+		ImGui::SetNextWindowPos(ImVec2(0, mainMenuSize.y), ImGuiCond_FirstUseEver);
+		ImGui::SetNextWindowSize(ImVec2(SCREEN_WIDTH / 4, SCREEN_HEIGHT - consoleHeight - mainMenuSize.y), ImGuiCond_FirstUseEver);
+		bool obert = true;
+		ImGui::Begin("Configuration", &obert);
+		if (ImGui::CollapsingHeader("Stats"))
 		{
 			ImGui::Text("Application Time = %d", SDL_GetTicks() / 1000);
 			char* title = new char[50];
@@ -101,98 +123,100 @@ update_status ModuleMenu::Update() {
 			sprintf_s(title, 50, "Milliseconds %.1f", ms_log[logMSIterator]);
 			ImGui::PlotHistogram("", ms_log, 50, 0, title, 0.0f, 100.0f, ImVec2(350, 100));
 		}
-
-		/*
-		ImGui::Spacing();
-		if (ImGui::CollapsingHeader("About"))
-		{
-			ImGui::BulletText("Engine name: DESPACITO 2");
-			ImGui::Text("Description");
-			ImGui::BulletText("DESPACITO 2 allows you to create AAA-quality games with little to none effort.");
-			ImGui::Text("Authors");
-			ImGui::BulletText("Roger Nogue Ballbe.");
-			ImGui::Text("Libraries");
-			ImGui::BulletText("SDL.");
-			ImGui::BulletText("IMGUI.");
-			ImGui::BulletText("GLEW.");
-			ImGui::Text("Licenses");
-			if (ImGui::Button("SDL")) {
-				ShellExecute(NULL, "open", "https://www.libsdl.org/license.php", NULL, NULL, SW_SHOWNORMAL);
-			}
-			if (ImGui::Button("IMGUI")) {
-				ShellExecute(NULL, "open", "https://github.com/ocornut/imgui/blob/master/LICENSE.txt", NULL, NULL, SW_SHOWNORMAL);
-			}
-			if (ImGui::Button("GLEW")) {
-				ShellExecute(NULL, "open", "https://www.opengl.org/about/#11", NULL, NULL, SW_SHOWNORMAL);
-			}
-			ImGui::Separator();
-		}
-		
-		//going over all the menus
-		//App info
-		if (ImGui::CollapsingHeader("Configuration"))
-		{
-			ImGui::Text("Application Time = %d", SDL_GetTicks()/1000);
-			char* title = new char[50];
-			updateFramerates();
-			sprintf_s(title, 50, "Framerate %.1f", fps_log[logFPSIterator]);
-			ImGui::PlotHistogram("", fps_log, 50, 0, title, 0.0f, 100.0f, ImVec2(350, 100));
-			sprintf_s(title, 50, "Milliseconds %.1f", ms_log[logMSIterator]);
-			ImGui::PlotHistogram("", ms_log, 50, 0, title, 0.0f, 100.0f, ImVec2(350, 100));
-		}
-		//global variables
-		if (ImGui::CollapsingHeader("Globals"))
-		{
-			ImGui::Text("Screen Width = %d", SCREEN_WIDTH);
-			ImGui::Text("Screen Height = %d", SCREEN_HEIGHT);
-			ImGui::Text("Fullscreen = %d", FULLSCREEN);
-			ImGui::Text("VSYNC = %d", VSYNC);
-			ImGui::Text("GLSL version = %s", GLSL_VERSION);
-		}
-		//module window
-		if (ImGui::CollapsingHeader("Window"))
-		{
-			ImGui::Text("Not much to be shown about this module yet.");
-		}
-		//module menu
-		if (ImGui::CollapsingHeader("Menu"))
-		{
-			ImGui::Text("Not much to be shown about this module yet.");
-		}
-		//module render
-		if (ImGui::CollapsingHeader("Render"))
-		{
-			ImGui::Text("Not much to be shown about this module yet.");
-		}
-		//module textures
-		if (ImGui::CollapsingHeader("Textures"))
-		{
-			ImGui::Text("Not much to be shown about this module yet.");
-		}
-		//module input
-		if (ImGui::CollapsingHeader("Input"))
-		{
-			ImGui::Text("Not much to be shown about this module yet.");
-		}
-		//module render exercise
-		if (ImGui::CollapsingHeader("Camera"))
-		{
-			ImGui::Text("Cam declarations:");
-			ImGui::BulletText("Camera position = ( %f, %f, %f )", App->camera->cam.x, App->camera->cam.y, App->camera->cam.z);
-			ImGui::BulletText("VRP position = ( %f, %f, %f )", App->camera->vrp.x, App->camera->vrp.y, App->camera->vrp.z);
-			ImGui::BulletText("Up directions = ( %f, %f, %f )", App->camera->up.x, App->camera->up.y, App->camera->up.z);
-			ImGui::BulletText("Forward directions= ( %f, %f, %f )", App->camera->fwd.x, App->camera->fwd.y, App->camera->fwd.z);
-			ImGui::BulletText("Side directions = ( %f, %f, %f )", App->camera->side.x, App->camera->side.y, App->camera->side.z);
-			ImGui::BulletText("Distance between camera and VRP = %f", App->camera->distCamVrp);
-		}
-		//module program
-		if (ImGui::CollapsingHeader("Program"))
-		{
-			ImGui::Text("Not much to be shown about this module yet.");
-		}
-		*/
+		ImGui::End();
 	}
-	console.Draw("Console");
+
+	/*
+	ImGui::Spacing();
+	if (ImGui::CollapsingHeader("About"))
+	{
+		ImGui::BulletText("Engine name: DESPACITO 2");
+		ImGui::Text("Description");
+		ImGui::BulletText("DESPACITO 2 allows you to create AAA-quality games with little to none effort.");
+		ImGui::Text("Authors");
+		ImGui::BulletText("Roger Nogue Ballbe.");
+		ImGui::Text("Libraries");
+		ImGui::BulletText("SDL.");
+		ImGui::BulletText("IMGUI.");
+		ImGui::BulletText("GLEW.");
+		ImGui::Text("Licenses");
+		if (ImGui::Button("SDL")) {
+			ShellExecute(NULL, "open", "https://www.libsdl.org/license.php", NULL, NULL, SW_SHOWNORMAL);
+		}
+		if (ImGui::Button("IMGUI")) {
+			ShellExecute(NULL, "open", "https://github.com/ocornut/imgui/blob/master/LICENSE.txt", NULL, NULL, SW_SHOWNORMAL);
+		}
+		if (ImGui::Button("GLEW")) {
+			ShellExecute(NULL, "open", "https://www.opengl.org/about/#11", NULL, NULL, SW_SHOWNORMAL);
+		}
+		ImGui::Separator();
+	}
+		
+	//going over all the menus
+	//App info
+	if (ImGui::CollapsingHeader("Configuration"))
+	{
+		ImGui::Text("Application Time = %d", SDL_GetTicks()/1000);
+		char* title = new char[50];
+		updateFramerates();
+		sprintf_s(title, 50, "Framerate %.1f", fps_log[logFPSIterator]);
+		ImGui::PlotHistogram("", fps_log, 50, 0, title, 0.0f, 100.0f, ImVec2(350, 100));
+		sprintf_s(title, 50, "Milliseconds %.1f", ms_log[logMSIterator]);
+		ImGui::PlotHistogram("", ms_log, 50, 0, title, 0.0f, 100.0f, ImVec2(350, 100));
+	}
+	//global variables
+	if (ImGui::CollapsingHeader("Globals"))
+	{
+		ImGui::Text("Screen Width = %d", SCREEN_WIDTH);
+		ImGui::Text("Screen Height = %d", SCREEN_HEIGHT);
+		ImGui::Text("Fullscreen = %d", FULLSCREEN);
+		ImGui::Text("VSYNC = %d", VSYNC);
+		ImGui::Text("GLSL version = %s", GLSL_VERSION);
+	}
+	//module window
+	if (ImGui::CollapsingHeader("Window"))
+	{
+		ImGui::Text("Not much to be shown about this module yet.");
+	}
+	//module menu
+	if (ImGui::CollapsingHeader("Menu"))
+	{
+		ImGui::Text("Not much to be shown about this module yet.");
+	}
+	//module render
+	if (ImGui::CollapsingHeader("Render"))
+	{
+		ImGui::Text("Not much to be shown about this module yet.");
+	}
+	//module textures
+	if (ImGui::CollapsingHeader("Textures"))
+	{
+		ImGui::Text("Not much to be shown about this module yet.");
+	}
+	//module input
+	if (ImGui::CollapsingHeader("Input"))
+	{
+		ImGui::Text("Not much to be shown about this module yet.");
+	}
+	//module render exercise
+	if (ImGui::CollapsingHeader("Camera"))
+	{
+		ImGui::Text("Cam declarations:");
+		ImGui::BulletText("Camera position = ( %f, %f, %f )", App->camera->cam.x, App->camera->cam.y, App->camera->cam.z);
+		ImGui::BulletText("VRP position = ( %f, %f, %f )", App->camera->vrp.x, App->camera->vrp.y, App->camera->vrp.z);
+		ImGui::BulletText("Up directions = ( %f, %f, %f )", App->camera->up.x, App->camera->up.y, App->camera->up.z);
+		ImGui::BulletText("Forward directions= ( %f, %f, %f )", App->camera->fwd.x, App->camera->fwd.y, App->camera->fwd.z);
+		ImGui::BulletText("Side directions = ( %f, %f, %f )", App->camera->side.x, App->camera->side.y, App->camera->side.z);
+		ImGui::BulletText("Distance between camera and VRP = %f", App->camera->distCamVrp);
+	}
+	//module program
+	if (ImGui::CollapsingHeader("Program"))
+	{
+		ImGui::Text("Not much to be shown about this module yet.");
+	}
+	*/
+	
+	
 
 	//ImGui::End();
 	return UPDATE_CONTINUE;
