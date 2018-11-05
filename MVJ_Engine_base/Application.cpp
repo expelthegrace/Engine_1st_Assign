@@ -10,6 +10,7 @@
 #include "ModuleCamera.h"
 #include "ModuleModelLoader.h"
 
+
 using namespace std;
 
 Application::Application()
@@ -40,9 +41,18 @@ Application::~Application()
 bool Application::Init()
 {
 	bool ret = true;
+	timer = new Timer();
+
+	timer->Start();
 
 	for(list<Module*>::iterator it = modules.begin(); it != modules.end() && ret; ++it)
 		ret = (*it)->Init();
+
+	float tempsInit = timer->Stop();
+
+	char* b = new char[50];
+	sprintf(b, "All Inits called in %f seconds \n", tempsInit);
+	App->menu->console.AddLog(b);
 
 	return ret;
 }

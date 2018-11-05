@@ -3,6 +3,7 @@
 #include<list>
 #include "Globals.h"
 #include "Module.h"
+#include "Timers.h"
 
 class ModuleRender;
 class ModuleWindow;
@@ -13,6 +14,7 @@ class ModuleProgram;
 class ModuleMenu;
 class ModuleCamera;
 class ModuleModelLoader;
+class Timer;
 
 class Application
 {
@@ -35,6 +37,8 @@ public:
 	ModuleMenu* menu = nullptr;
 	ModuleCamera* camera = nullptr;
 	ModuleModelLoader* modelLoader = nullptr;
+
+	Timer* timer;
 
 private:
 	std::list<Module*> modules;
