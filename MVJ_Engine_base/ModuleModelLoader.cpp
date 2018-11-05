@@ -87,6 +87,9 @@ void ModuleModelLoader::GenerateMeshes(const aiScene* scene)
 	{
 		const aiMesh* src_mesh = scene->mMeshes[i];
 
+		numVertices += src_mesh->mNumVertices;
+		numFaces += src_mesh->mNumFaces;
+
 		unsigned* vboActual = &vbos[i];
 
 		glGenBuffers(1, vboActual);
@@ -133,11 +136,36 @@ void ModuleModelLoader::GenerateMeshes(const aiScene* scene)
 		glUnmapBuffer(GL_ELEMENT_ARRAY_BUFFER);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-		materials[i] = src_mesh->mMaterialIndex;
+		textures[i] = src_mesh->mMaterialIndex;
 		numVerticesMesh[i] = src_mesh->mNumVertices;
 		numIndexesMesh[i] = src_mesh->mNumFaces * 3;
 
+		sprintf(b, "Generated mesh with %u vertices \n", numVerticesMesh[i]);
+		App->menu->console.AddLog(b);
+		sprintf(b, "Generated mesh with %u indexes \n \n", numIndexesMesh[i]);
+		App->menu->console.AddLog(b);
 		
+	}
+}
+
+void ModuleModelLoader::GenerateMaterials(const aiScene* scene)
+{
+	for (unsigned i = 0; i < scene->mNumMaterials; ++i)
+	{
+		const aiMaterial* src_material = scene->mMaterials[i];
+		unsigned dst_material;
+		//Material dst_material;
+
+		aiString file;
+		aiTextureMapping mapping;
+		unsigned uvindex = 0;
+
+		if (src_material->GetTexture(aiTextureType_DIFFUSE, 0, &file, &mapping, &uvindex) == AI_SUCCESS)
+		{
+			dst_material = App->textures->Load(file.data, false);
+		}
+
+		materials[i] = dst_material;
 	}
 }
 
@@ -145,7 +173,7 @@ bool ModuleModelLoader::Init() {
 
 	numMeshes = 0;
 
-	scene = aiImportFile("BakerHouse.fbx", aiProcessPreset_TargetRealtime_MaxQuality);
+	scene = aiImportFile("BakerHouse.fbx", aiProcessPreset_TargetRealtime_MaxQuality | aiProcess_FixInfacingNormals);
 	const char* errorMesage;
 
 	texture0 = App->textures->Load("Baker_house.png", false);
@@ -162,6 +190,7 @@ bool ModuleModelLoader::Init() {
 
 		vbos = new unsigned[numMeshes];
 		ibos = new unsigned[numMeshes];
+		textures = new unsigned[numMeshes];
 		materials = new unsigned[numMeshes];
 		numVerticesMesh = new unsigned[numMeshes];
 		numIndexesMesh = new unsigned[numMeshes];
@@ -181,6 +210,7 @@ bool ModuleModelLoader::Init() {
 		*/
 
 		GenerateMeshes(scene);
+		GenerateMaterials(scene);
 	}
 
 	//Console data update

@@ -18,14 +18,18 @@ public:
 	//update_status   Update();
 	//bool            CleanUp();
 
+	//not in use
 	unsigned GenerateMeshData(const aiMesh* mesh, const unsigned iVbo);
 	unsigned GenerateMeshIndexes(const aiMesh* mesh, const unsigned i);
 
 	//carlos
 	void            GenerateMeshes(const aiScene* scene);
+	void            GenerateMaterials(const aiScene* scene);
+
 
 	unsigned* vbos;
 	unsigned* ibos;
+	unsigned* textures;
 	unsigned* materials;
 	unsigned*  numVerticesMesh;
 	unsigned*  numIndexesMesh;

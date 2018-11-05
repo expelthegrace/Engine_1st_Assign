@@ -81,13 +81,16 @@ update_status ModuleRender::Update()
 		unsigned vboActual = App->modelLoader->vbos[i];
 		unsigned numVerticesActual = App->modelLoader->numVerticesMesh[i];
 		unsigned numIndexesActual = App->modelLoader->numIndexesMesh[i];
-		
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, App->modelLoader->materials[App->modelLoader->textures[i]]);
+		glUniform1i(glGetUniformLocation(App->shaderProgram->program, "texture0"), 0);
 
 		glEnableVertexAttribArray(0);
-		//glEnableVertexAttribArray(1);
+		glEnableVertexAttribArray(1);
 		glBindBuffer(GL_ARRAY_BUFFER, vboActual);
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-		//glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)(sizeof(float) * 3 * App->modelLoader->numVerticesMesh[i]));
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)(sizeof(float) * 3 * App->modelLoader->numVerticesMesh[i]));
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, App->modelLoader->ibos[i]);
 		glDrawElements(GL_TRIANGLES, numIndexesActual, GL_UNSIGNED_INT, nullptr);
 
@@ -100,9 +103,7 @@ update_status ModuleRender::Update()
 		
 	}
 
-	glUseProgram(0);
-
-	/*
+	
 	glLineWidth(1.0f);
 
 	glBegin(GL_LINES);
@@ -114,8 +115,10 @@ update_status ModuleRender::Update()
 		glVertex3f(-d, 0.0f, i);
 		glVertex3f(d, 0.0f, i);
 	}
-	glEnd();*/
+	glEnd();
 
+
+	glUseProgram(0);
 	return UPDATE_CONTINUE;
 }
 
