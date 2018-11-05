@@ -78,18 +78,18 @@ update_status ModuleRender::Update()
 	for (int i = 0; i < App->modelLoader->scene->mNumMeshes; ++i) {
 	
 
-		/*unsigned vboActual = App->modelLoader->vbos[i];
+		unsigned vboActual = App->modelLoader->vbos[i];
 		unsigned numVerticesActual = App->modelLoader->numVerticesMesh[i];
 		unsigned numIndexesActual = App->modelLoader->numIndexesMesh[i];
-*/
+		
 
 		glEnableVertexAttribArray(0);
-		glEnableVertexAttribArray(1);
-		glBindBuffer(GL_ARRAY_BUFFER, App->modelLoader->vbos[i]);
+		//glEnableVertexAttribArray(1);
+		glBindBuffer(GL_ARRAY_BUFFER, vboActual);
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)(sizeof(float) * 3 * App->modelLoader->numVerticesMesh[i]));
+		//glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)(sizeof(float) * 3 * App->modelLoader->numVerticesMesh[i]));
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, App->modelLoader->ibos[i]);
-		glDrawElements(GL_TRIANGLES, App->modelLoader->numIndexesMesh[i], GL_UNSIGNED_INT, nullptr);
+		glDrawElements(GL_TRIANGLES, numIndexesActual, GL_UNSIGNED_INT, nullptr);
 
 		glDisableVertexAttribArray(0);
 		glDisableVertexAttribArray(1);

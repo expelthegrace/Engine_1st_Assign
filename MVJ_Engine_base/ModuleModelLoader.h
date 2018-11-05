@@ -21,6 +21,9 @@ public:
 	unsigned GenerateMeshData(const aiMesh* mesh, const unsigned iVbo);
 	unsigned GenerateMeshIndexes(const aiMesh* mesh, const unsigned i);
 
+	//carlos
+	void            GenerateMeshes(const aiScene* scene);
+
 	unsigned* vbos;
 	unsigned* ibos;
 	unsigned* materials;
