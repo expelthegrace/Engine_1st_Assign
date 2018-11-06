@@ -4,6 +4,18 @@
 
 typedef unsigned __int8 Uint8;
 
+enum KeyState
+{
+	KEY_IDLE = 0,
+	KEY_DOWN,
+	KEY_REPEAT,
+	KEY_UP
+};
+
+struct Punt {
+	int x, y;
+};
+
 class ModuleInput : public Module
 {
 public:
@@ -12,9 +24,14 @@ public:
 	~ModuleInput();
 
 	bool Init();
-	update_status Update();
+	update_status PreUpdate();
 	bool CleanUp();
+
 	const Uint8 *keyboard = NULL;
-	const Uint8 *mouse_buttons = NULL;
+	Uint8 *mouse_buttons = NULL;
+
+	Punt mouse_position;
+	Punt mouse;
+
 private:
 };

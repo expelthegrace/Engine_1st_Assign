@@ -3,6 +3,8 @@
 #include "ModuleInput.h"
 #include "SDL/include/SDL.h"
 
+
+
 ModuleInput::ModuleInput()
 {}
 
@@ -23,13 +25,14 @@ bool ModuleInput::Init()
 		ret = false;
 	}
 
+	mouse_buttons = new Uint8[10];
 
 
 	return ret;
 }
 
 // Called every draw update
-update_status ModuleInput::Update()
+update_status ModuleInput::PreUpdate()
 {
 	SDL_PumpEvents();
 
@@ -38,7 +41,7 @@ update_status ModuleInput::Update()
 	if (keyboard[SDL_SCANCODE_ESCAPE]) {
 		return UPDATE_STOP;
 	}
-	/*
+	
 
 	static SDL_Event event;
 	while (SDL_PollEvent(&event) != 0)
@@ -54,13 +57,15 @@ update_status ModuleInput::Update()
 			break;
 
 		case SDL_MOUSEMOTION:
-			mouse_motion.x = event.motion.xrel / SCREEN_SIZE;
-			mouse_motion.y = event.motion.yrel / SCREEN_SIZE;
-			mouse.x = event.motion.x / SCREEN_SIZE;
-			mouse.y = event.motion.y / SCREEN_SIZE;
+			mouse_position.x = event.motion.xrel;
+			mouse_position.y = event.motion.yrel;
+			mouse.x = event.motion.x;
+			mouse.y = event.motion.y;
 			break;
 		}
-	}*/
+
+		
+	}
 
 	return UPDATE_CONTINUE;
 }
