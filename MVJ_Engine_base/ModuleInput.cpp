@@ -23,6 +23,8 @@ bool ModuleInput::Init()
 		ret = false;
 	}
 
+
+
 	return ret;
 }
 
@@ -36,6 +38,29 @@ update_status ModuleInput::Update()
 	if (keyboard[SDL_SCANCODE_ESCAPE]) {
 		return UPDATE_STOP;
 	}
+	/*
+
+	static SDL_Event event;
+	while (SDL_PollEvent(&event) != 0)
+	{
+		switch (event.type)
+		{
+		case SDL_MOUSEBUTTONDOWN:
+			mouse_buttons[event.button.button - 1] = KEY_DOWN;
+			break;
+
+		case SDL_MOUSEBUTTONUP:
+			mouse_buttons[event.button.button - 1] = KEY_UP;
+			break;
+
+		case SDL_MOUSEMOTION:
+			mouse_motion.x = event.motion.xrel / SCREEN_SIZE;
+			mouse_motion.y = event.motion.yrel / SCREEN_SIZE;
+			mouse.x = event.motion.x / SCREEN_SIZE;
+			mouse.y = event.motion.y / SCREEN_SIZE;
+			break;
+		}
+	}*/
 
 	return UPDATE_CONTINUE;
 }

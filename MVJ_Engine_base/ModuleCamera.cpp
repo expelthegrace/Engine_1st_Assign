@@ -16,6 +16,7 @@ ModuleCamera::~ModuleCamera()
 {
 }
 
+/*
 math::float3 ModuleCamera::transformation(math::float3 point, math::float3 transf) {
 	math::float4x4 transfMat = math::float4x4::identity;
 	transfMat[0][3] = transf.x; transfMat[1][3] = transf.y; transfMat[2][3] = transf.z;
@@ -52,25 +53,42 @@ void ModuleCamera::rotationZ(math::float3& p, float angle) {
 	rotZ[2][0] = 0;					rotZ[2][1] = 0;					rotZ[2][2] = 1;
 	p = rotZ * p;
 }
-
+*/
 bool  ModuleCamera::Init() { // ----------------------------------------------------------------
 	cameraChanged = false;
-	movementSpeed = 0.1;
-	cam = math::float3(0, 0, 3);
+	speed1 = 0.1;
+	speed2 = speed1 * 3.5;
+	movementSpeed = speed1;
+	camPos = math::float3(0, 1, 8);
 	distCamVrp = 2.f;
 	fwd = math::float3(0, 0, -1);
-	vrp = cam + fwd * distCamVrp;
+	//vrp = camPos + fwd * distCamVrp;
 
 	//vrp = math::float3(0, 0, 0);
 	up = math::float3(0, 1, 0);
+
+	frustum.type = FrustumType::PerspectiveFrustum;
+	frustum.pos = camPos;//cam;
+	frustum.front = fwd.Normalized();
+	frustum.up = up.Normalized();
+	frustum.nearPlaneDistance = 0.1f;
+	frustum.farPlaneDistance = 100.0f;
+	frustum.verticalFov = math::pi / 4.0f;
+	float aspect = SCREEN_WIDTH / SCREEN_HEIGHT;
+	frustum.horizontalFov = 2.f * atanf(tanf(frustum.verticalFov * 0.5f) *aspect);
+
+	side = (frustum.WorldRight()).Normalized();
+
+	projection = frustum.ProjectionMatrix();
+	
 
 	Xaxis = math::float3(1, 0, 0);
 	Yaxis = math::float3(0, 1, 0);
 	Zaxis = math::float3(0, 0, 1);
 	//distCamVrp = sqrt(pow((cam.x - vrp.x), 2) + pow((cam.y - vrp.y), 2) + pow((cam.z - vrp.z), 2));
 
-	view = lookAt(cam, vrp, up);
-	UpdateProjection();
+	view = frustum.ViewMatrix();
+	//UpdateProjection();
 
 	return true;
 }
@@ -78,12 +96,43 @@ update_status   ModuleCamera::Update() {
 	//keyboard lecture
 	//const Uint8 *keyboard = NULL;
 	//keyboard listeners
-	if (App->input->keyboard[SDL_SCANCODE_Q]) {
-		cam += Yaxis*movementSpeed;
-		vrp += Yaxis*movementSpeed;
+	if (App->input->keyboard[SDL_SCANCODE_LSHIFT]) {
+		movementSpeed = speed2;
+	}
+	else movementSpeed = speed1;
+	
+	if (App->input->keyboard[SDL_SCANCODE_E]) {
+		camPos += Yaxis*movementSpeed;
 		cameraChanged = true;
 	}
-	if (App->input->keyboard[SDL_SCANCODE_E]) {
+	if (App->input->keyboard[SDL_SCANCODE_Q]) {
+		camPos -= Yaxis * movementSpeed;
+		cameraChanged = true;
+	}
+	if (App->input->keyboard[SDL_SCANCODE_W]) {
+		camPos += fwd * movementSpeed;
+		cameraChanged = true;
+	}
+	if (App->input->keyboard[SDL_SCANCODE_S]) {
+		camPos -= fwd * movementSpeed;
+		cameraChanged = true;
+	}
+	if (App->input->keyboard[SDL_SCANCODE_A]) {
+		camPos -= side * movementSpeed;
+		cameraChanged = true;
+	}
+	if (App->input->keyboard[SDL_SCANCODE_D]) {
+		camPos += side * movementSpeed;
+		cameraChanged = true;
+	}
+
+	if (cameraChanged) {
+		UpdateFrustum();
+		cameraChanged = false;
+	}
+
+	/*
+	if (App->input->keyboard[SDL_SCANCODE_Q]) {
 		cam -= Yaxis*movementSpeed;
 		vrp -= Yaxis*movementSpeed;
 		cameraChanged = true;
@@ -139,29 +188,6 @@ update_status   ModuleCamera::Update() {
 		cameraChanged = true;
 	}
 
-	//mouse listeners
-	/*static SDL_Event event;
-	while (SDL_PollEvent(&event) != 0)
-	{
-		switch (event.type)
-		{
-		case SDL_MOUSEBUTTONDOWN:
-			mouse_buttons[event.button.button - 1] = KEY_DOWN;
-			break;
-
-		case SDL_MOUSEBUTTONUP:
-			mouse_buttons[event.button.button - 1] = KEY_UP;
-			break;
-
-		case SDL_MOUSEMOTION:
-			mouse_motion.x = event.motion.xrel / SCREEN_SIZE;
-			mouse_motion.y = event.motion.yrel / SCREEN_SIZE;
-			mouse.x = event.motion.x / SCREEN_SIZE;
-			mouse.y = event.motion.y / SCREEN_SIZE;
-			break;
-		}
-	}*/
-
 
 	//update matrixs and output console log with camera info
 	if (cameraChanged) {
@@ -184,16 +210,28 @@ update_status   ModuleCamera::Update() {
 		cameraChanged = false;
 		delete b;
 	}
+	*/
 	return UPDATE_CONTINUE;
 }
 bool            ModuleCamera::CleanUp() {
 	return true;
 }
 
-math::float4x4 ModuleCamera::lookAt(const math::float3& obss, const math::float3& vrpp, math::float3& upp) {
-	cam = obss;
 
-	fwd = (vrp - obss);
+void ModuleCamera::UpdateFrustum() {
+	frustum.pos = camPos;//cam;
+	frustum.front = fwd.Normalized();
+	frustum.up = up.Normalized();
+
+	view = frustum.ViewMatrix();
+	projection = frustum.ProjectionMatrix();
+}
+
+
+math::float4x4 ModuleCamera::lookAt(const math::float3& obss, const math::float3& vrpp, math::float3& upp) {
+	camPos = obss;
+
+	fwd = (vrpp - obss);
 	fwd = fwd.Normalized();
 
 	side = (fwd.Cross(upp));
@@ -210,9 +248,15 @@ math::float4x4 ModuleCamera::lookAt(const math::float3& obss, const math::float3
 	//updating cam values
 	up = newUp.Normalized();
 
+	//
+	frustum.pos = camPos;//cam;
+	frustum.front = fwd;
+	frustum.up = up;
+	
+
 	return viewAux;
 }
-
+/*
 void ModuleCamera::UpdateProjection() {
 	frustum.type = FrustumType::PerspectiveFrustum;
 	frustum.pos = cam;//cam;
@@ -252,3 +296,4 @@ void ModuleCamera::setFoV(float fov){
 void ModuleCamera::SetAspectRatio(float aspect) {
 
 }
+*/

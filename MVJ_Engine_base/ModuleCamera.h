@@ -17,6 +17,10 @@ public:
 	bool            Init();
 	update_status   Update();
 	bool            CleanUp();
+
+	void UpdateFrustum();
+	
+	/*
 	math::float3 transformation(math::float3 point, math::float3 transf);
 	void rotationX(math::float3& p, float angle);
 	void rotationY(math::float3& p, float angle);
@@ -32,11 +36,22 @@ public:
 	math::float3 up;
 	math::float3 fwd;
 	math::float3 side;
+	
+	
+	*/
+	math::float3 camPos;
+	float distCamVrp;
+	float movementSpeed;
+	float speed1;
+	float speed2;
+	math::float3 up;
+	math::float3 fwd;
+	math::float3 side;
+
+	//math::float3 vrp;
 	math::float3 Xaxis;
 	math::float3 Yaxis;
 	math::float3 Zaxis;
-	float movementSpeed;
-
 
 	Frustum frustum;
 	math::float4x4 view;
