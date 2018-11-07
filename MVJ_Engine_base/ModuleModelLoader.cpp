@@ -4,6 +4,7 @@
 #include "ModuleMenu.h"
 #include "Application.h"
 #include "ModuleTextures.h"
+#include "ModuleCamera.h"
 
 
 ModuleModelLoader::ModuleModelLoader()
@@ -160,6 +161,8 @@ bool ModuleModelLoader::LoadNewModel(char* path) {
 		GenerateMaterials(scene);
 	}
 
+	
+
 	//Console data update
 
 	sprintf(b, "------------------ Model loaded ------------------ \n");
@@ -179,6 +182,8 @@ bool ModuleModelLoader::LoadNewModel(char* path) {
 	sprintf(b, "Center point: (%f, %f, %f) \n", boundingBox->CenterPoint().x, boundingBox->CenterPoint().y, boundingBox->CenterPoint().z);
 	App->menu->console.AddLog(b);
 
+	App->camera->FocusModel();
+
 	modelLoaded = true;
 	return true;
 
@@ -187,6 +192,8 @@ bool ModuleModelLoader::LoadNewModel(char* path) {
 bool ModuleModelLoader::Init() {
 	modelLoaded = false;
 	LoadNewModel("BakerHouse.fbx");
+
+	
 
 	return true;
 }

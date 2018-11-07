@@ -20,6 +20,7 @@ ModuleCamera::~ModuleCamera()
 
 
 bool  ModuleCamera::Init() { // ----------------------------------------------------------------
+	fPressed = false;
 	cameraChanged = false;
 	speed1 = 0.1;
 	speed2 = speed1 * 3.5;
@@ -46,7 +47,6 @@ bool  ModuleCamera::Init() { // ------------------------------------------------
 	Xaxis = math::float3(1, 0, 0);
 	Yaxis = math::float3(0, 1, 0);
 	Zaxis = math::float3(0, 0, 1);
-	//distCamVrp = sqrt(pow((cam.x - vrp.x), 2) + pow((cam.y - vrp.y), 2) + pow((cam.z - vrp.z), 2));
 
 	view = frustum.ViewMatrix();
 	projection = frustum.ProjectionMatrix();
@@ -65,11 +65,7 @@ update_status   ModuleCamera::Update() {
 	}
 	else movementSpeed = speed1;
 	
-	if (App->input->keyboard[SDL_SCANCODE_F]) {
-		FocusModel();
-		cameraChanged = true;
-	}
-
+	if (App->input->keyboard[SDL_SCANCODE_F]) FocusModel();
 	
 	// arrow rotations
 	if (App->input->keyboard[SDL_SCANCODE_LEFT]) {
@@ -171,8 +167,17 @@ bool            ModuleCamera::CleanUp() {
 }
 
 void ModuleCamera::FocusModel() {
+	camPos = {
+		App->modelLoader->boundingBox->CenterPoint().x,
+		App->modelLoader->boundingBox->CenterPoint().y,
+		App->modelLoader->boundingBox->CenterPoint().z + App->modelLoader->boundingBox->Diagonal().Length()
+	};
 
 	LookAt(App->modelLoader->boundingBox->CenterPoint());
+
+	App->menu->console.AddLog("Camera focused \n");
+
+	UpdateFrustum();
 
 }
 
