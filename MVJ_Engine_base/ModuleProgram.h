@@ -12,6 +12,8 @@ public:
 	update_status   Update();
 	bool            CleanUp();
 
-	GLuint program;
+	void CreateProgram(GLuint& variable, char* vsName, char* fsName);
+
+	GLuint programModel, programLines;
 };
 

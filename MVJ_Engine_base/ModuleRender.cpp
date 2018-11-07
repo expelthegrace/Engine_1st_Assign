@@ -66,13 +66,13 @@ update_status ModuleRender::PreUpdate()
 update_status ModuleRender::Update()
 {
 	
-	glUseProgram(App->shaderProgram->program);
+	glUseProgram(App->shaderProgram->programModel);
 
-	glUniformMatrix4fv(glGetUniformLocation(App->shaderProgram->program,
+	glUniformMatrix4fv(glGetUniformLocation(App->shaderProgram->programModel,
 		"model"), 1, GL_TRUE, &model[0][0]);
-	glUniformMatrix4fv(glGetUniformLocation(App->shaderProgram->program,
+	glUniformMatrix4fv(glGetUniformLocation(App->shaderProgram->programModel,
 		"view"), 1, GL_TRUE, &App->camera->view[0][0]);
-	glUniformMatrix4fv(glGetUniformLocation(App->shaderProgram->program,
+	glUniformMatrix4fv(glGetUniformLocation(App->shaderProgram->programModel,
 		"proj"), 1, GL_TRUE, &App->camera->projection[0][0]);
 
 	for (int i = 0; i < App->modelLoader->scene->mNumMeshes; ++i) {
@@ -84,7 +84,7 @@ update_status ModuleRender::Update()
 
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, App->modelLoader->materials[App->modelLoader->textures[i]]);
-		glUniform1i(glGetUniformLocation(App->shaderProgram->program, "texture0"), 0);
+		glUniform1i(glGetUniformLocation(App->shaderProgram->programModel, "texture0"), 0);
 
 		glEnableVertexAttribArray(0);
 		glEnableVertexAttribArray(1);
@@ -102,8 +102,24 @@ update_status ModuleRender::Update()
 		glBindTexture(GL_TEXTURE_2D, 0);
 		
 	}
+	glUseProgram(0);
 
-	
+	float3 colorWhite = { 1.,1.,1. };
+
+	glUseProgram(App->shaderProgram->programLines);
+
+	glUniformMatrix4fv(glGetUniformLocation(App->shaderProgram->programLines,
+		"model"), 1, GL_TRUE, &model[0][0]);
+	glUniformMatrix4fv(glGetUniformLocation(App->shaderProgram->programLines,
+		"view"), 1, GL_TRUE, &App->camera->view[0][0]);
+	glUniformMatrix4fv(glGetUniformLocation(App->shaderProgram->programLines,
+		"proj"), 1, GL_TRUE, &App->camera->projection[0][0]);
+
+	int linesGrid = glGetUniformLocation(App->shaderProgram->programLines, "color0");
+	float white[4] = { 1, 1, 1, 1 };
+	glUniform4fv(linesGrid, 1, white);
+
+
 	glLineWidth(1.0f);
 
 	glBegin(GL_LINES);
@@ -117,8 +133,8 @@ update_status ModuleRender::Update()
 	}
 	glEnd();
 
-
 	glUseProgram(0);
+	
 	return UPDATE_CONTINUE;
 }
 
@@ -133,6 +149,7 @@ update_status ModuleRender::PostUpdate()
 bool ModuleRender::CleanUp()
 {
 	LOG("Destroying renderer");
+	SDL_GL_DeleteContext(context);
 
 	//Destroy window
 

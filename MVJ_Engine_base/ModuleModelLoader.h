@@ -17,7 +17,7 @@ public:
 
 	bool            Init();
 	//update_status   Update();
-	//bool            CleanUp();
+	bool            CleanUp();
 
 
 	bool LoadNewModel(char* path);

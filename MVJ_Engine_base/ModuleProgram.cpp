@@ -13,10 +13,10 @@ ModuleProgram::~ModuleProgram()
 {
 }
 
-bool            ModuleProgram::Init() {
+void ModuleProgram::CreateProgram(GLuint& variable, char* vsName, char* fsName) {
 	char* dataVertex = nullptr;
 	FILE* file = nullptr;
-	fopen_s(&file, "Default.vs", "rb");
+	fopen_s(&file, vsName, "rb");
 	if (file)
 	{
 		fseek(file, 0, SEEK_END);
@@ -30,7 +30,7 @@ bool            ModuleProgram::Init() {
 
 	char* dataFragment = nullptr;
 	file = nullptr;
-	fopen_s(&file, "Default.fs", "rb");
+	fopen_s(&file, fsName, "rb");
 	if (file)
 	{
 		fseek(file, 0, SEEK_END);
@@ -44,7 +44,7 @@ bool            ModuleProgram::Init() {
 	GLuint vs = glCreateShader(GL_VERTEX_SHADER);
 	glShaderSource(vs, 1, &dataVertex, 0);
 	glCompileShader(vs);
-	
+
 	//case compilation error vs
 	GLint params = GL_TRUE;
 	glGetShaderiv(vs, GL_COMPILE_STATUS, &params);
@@ -54,7 +54,7 @@ bool            ModuleProgram::Init() {
 		glGetShaderInfoLog(vs, maxLength, &maxLength, &infoLog[0]);
 		glDeleteShader(vs);
 	}
-	
+
 	GLuint fs = glCreateShader(GL_FRAGMENT_SHADER);
 	glShaderSource(fs, 1, &dataFragment, 0);
 	glCompileShader(fs);
@@ -68,25 +68,25 @@ bool            ModuleProgram::Init() {
 		glDeleteShader(fs);
 	}
 
-	program = glCreateProgram();
-	glAttachShader(program, vs);
-	glAttachShader(program, fs);
-	glLinkProgram(program);
+	variable = glCreateProgram();
+	glAttachShader(variable, vs);
+	glAttachShader(variable, fs);
+	glLinkProgram(variable);
 
 	//case compilation error program
 	GLint isLinked = 0;
-	glGetProgramiv(program, GL_LINK_STATUS, (int *)&isLinked);
+	glGetProgramiv(variable, GL_LINK_STATUS, (int *)&isLinked);
 	if (isLinked == GL_FALSE)
 	{
 		GLint maxLength = 0;
-		glGetProgramiv(program, GL_INFO_LOG_LENGTH, &maxLength);
+		glGetProgramiv(variable, GL_INFO_LOG_LENGTH, &maxLength);
 
 		// The maxLength includes the NULL character
 		std::vector<GLchar> infoLog(maxLength);
-		glGetProgramInfoLog(program, maxLength, &maxLength, &infoLog[0]);
+		glGetProgramInfoLog(variable, maxLength, &maxLength, &infoLog[0]);
 
 		// We don't need the program anymore.
-		glDeleteProgram(program);
+		glDeleteProgram(variable);
 		glDeleteShader(vs);
 		glDeleteShader(fs);
 
@@ -95,13 +95,20 @@ bool            ModuleProgram::Init() {
 	glDeleteShader(GL_VERTEX_SHADER);
 	glDeleteShader(GL_FRAGMENT_SHADER);
 
-	glUseProgram(program);
+	//glUseProgram(variable);
+}
+
+
+bool ModuleProgram::Init() {
+	
+	CreateProgram(programLines, "Default.vs", "Default.fs");
+	CreateProgram(programModel, "ModelShader.vs", "ModelShader.fs");
 	
 	return true;
 }
 update_status   ModuleProgram::Update() {
 	return UPDATE_CONTINUE;
 }
-bool            ModuleProgram::CleanUp() {
+bool ModuleProgram::CleanUp() {
 	return true;
 }

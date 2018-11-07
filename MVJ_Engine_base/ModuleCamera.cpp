@@ -20,7 +20,6 @@ ModuleCamera::~ModuleCamera()
 
 
 bool  ModuleCamera::Init() { // ----------------------------------------------------------------
-	fPressed = false;
 	cameraChanged = false;
 	speed1 = 0.1;
 	speed2 = speed1 * 3.5;
@@ -174,11 +173,7 @@ void ModuleCamera::FocusModel() {
 	};
 
 	LookAt(App->modelLoader->boundingBox->CenterPoint());
-
-	App->menu->console.AddLog("Camera focused \n");
-
 	UpdateFrustum();
-
 }
 
 void ModuleCamera::LookAt(math::float3& target) {

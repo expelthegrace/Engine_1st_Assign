@@ -92,12 +92,6 @@ void ModuleModelLoader::GenerateMeshes(const aiScene* scene)
 		numVerticesMesh[i] = src_mesh->mNumVertices;
 		numIndexesMesh[i] = src_mesh->mNumFaces * 3;
 
-		/*
-		sprintf(b, "Generated mesh with %u vertices \n", numVerticesMesh[i]);
-		App->menu->console.AddLog(b);
-		sprintf(b, "Generated mesh with %u indexes \n", numIndexesMesh[i]);
-		App->menu->console.AddLog(b);
-		*/
 		
 	}
 
@@ -193,7 +187,12 @@ bool ModuleModelLoader::Init() {
 	modelLoaded = false;
 	LoadNewModel("BakerHouse.fbx");
 
-	
+	return true;
+}
 
+bool ModuleModelLoader::CleanUp() {
+
+
+	aiDetachAllLogStreams();
 	return true;
 }
