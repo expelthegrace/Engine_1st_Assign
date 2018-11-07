@@ -20,24 +20,6 @@ public:
 	bool            CleanUp();
 
 	void UpdateFrustum();
-	
-	/*
-	math::float3 transformation(math::float3 point, math::float3 transf);
-	void rotationZ(math::float3& p, float angle);
-
-
-	void setFoV(float fov);//changes vertical Fov
-	void SetAspectRatio(float aspect);//changes horizontal Fov
-	//variables
-	float distCamVrp;
-	math::float3 cam;
-	math::float3 vrp;
-	math::float3 up;
-	math::float3 fwd;
-	math::float3 side;
-	
-	
-	*/
 
 	Punt lastMouse, actualMouse;
 

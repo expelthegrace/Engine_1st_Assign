@@ -1,11 +1,12 @@
-#pragma once
+#ifndef _MODELLOADER_
+#define _MODELLOADER_
 #include "Module.h"
 #include <assimp/cimport.h>
 #include <assimp/postprocess.h>
 #include <assimp/scene.h>
 #include <assimp/material.h>
 #include <assimp/mesh.h>
-
+#include "MathGeoLib.h"
 
 class ModuleModelLoader :
 	public Module
@@ -42,7 +43,12 @@ public:
 
 	bool modelLoaded;
 
+	float minY, maxY, minX, maxX, minZ, maxZ;
+
+	AABB* boundingBox;
+
 	const aiScene* scene;
 
 };
 
+#endif

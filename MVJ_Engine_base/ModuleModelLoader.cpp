@@ -1,9 +1,6 @@
 ﻿#include "ModuleModelLoader.h"
-
-
 #include "GL/glew.h"
 #include "SDL.h"
-#include "MathGeoLib.h"
 #include "ModuleMenu.h"
 #include "Application.h"
 #include "ModuleTextures.h"
@@ -22,6 +19,10 @@ ModuleModelLoader::~ModuleModelLoader()
 
 void ModuleModelLoader::GenerateMeshes(const aiScene* scene)
 {
+	maxX = minX = scene->mMeshes[0]->mVertices[0].x;
+	maxY = minY = scene->mMeshes[0]->mVertices[0].y;
+	maxZ = minZ = scene->mMeshes[0]->mVertices[0].z;
+
 	for (unsigned i = 0; i < scene->mNumMeshes; ++i)
 	{
 		const aiMesh* src_mesh = scene->mMeshes[i];
@@ -38,6 +39,17 @@ void ModuleModelLoader::GenerateMeshes(const aiScene* scene)
 
 		glBufferData(GL_ARRAY_BUFFER, (sizeof(float) * 3 + sizeof(float) * 2)*src_mesh->mNumVertices, nullptr, GL_STATIC_DRAW);
 		glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(float) * 3 * src_mesh->mNumVertices, src_mesh->mVertices);
+
+
+		// Bounding Box
+		for (int i = 0; i < src_mesh->mNumVertices; ++i) {
+			if (src_mesh->mVertices[i].x > maxX) maxX = src_mesh->mVertices[i].x;
+			if (src_mesh->mVertices[i].x < minX) minX = src_mesh->mVertices[i].x;
+			if (src_mesh->mVertices[i].y > maxY) maxY = src_mesh->mVertices[i].y;
+			if (src_mesh->mVertices[i].y < minY) minY = src_mesh->mVertices[i].y;
+			if (src_mesh->mVertices[i].z > maxZ) maxZ = src_mesh->mVertices[i].z;
+			if (src_mesh->mVertices[i].z < minZ) minZ = src_mesh->mVertices[i].z;
+		}	
 
 		// Texture coords
 
@@ -87,6 +99,8 @@ void ModuleModelLoader::GenerateMeshes(const aiScene* scene)
 		*/
 		
 	}
+
+	boundingBox = new AABB(math::float3(minX, minY, minZ), math::float3(maxX, maxY, maxZ));
 }
 
 void ModuleModelLoader::GenerateMaterials(const aiScene* scene)
@@ -157,6 +171,10 @@ bool ModuleModelLoader::LoadNewModel(char* path) {
 	sprintf(b, "Number of vertices: %u \n", numVertices);
 	App->menu->console.AddLog(b);
 	sprintf(b, "Number of faces: %u \n", numFaces);
+	App->menu->console.AddLog(b);
+	sprintf(b, "Bounding box max: (%f, %f, %f) \n", boundingBox->MaxX(), boundingBox->MaxY(), boundingBox->MaxZ());
+	App->menu->console.AddLog(b);
+	sprintf(b, "Bounding box min: (%f, %f, %f) \n", boundingBox->MinX(), boundingBox->MinY(), boundingBox->MinZ());
 	App->menu->console.AddLog(b);
 
 	modelLoaded = true;

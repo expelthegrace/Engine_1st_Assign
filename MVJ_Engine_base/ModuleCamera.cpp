@@ -16,26 +16,6 @@ ModuleCamera::~ModuleCamera()
 {
 }
 
-/*
-math::float3 ModuleCamera::transformation(math::float3 point, math::float3 transf) {
-	math::float4x4 transfMat = math::float4x4::identity;
-	transfMat[0][3] = transf.x; transfMat[1][3] = transf.y; transfMat[2][3] = transf.z;
-	math::float4 point4; point4[0] = point.x; point4[1] = point.y; point4[2] = point.z; point4[3] = 1;
-
-	point4 = transfMat * point4;
-	math::float3 res; res[0] = point4.x; res[1] = point4.y; res[2] = point4.z;
-	return res;
-}
-
-
-void ModuleCamera::rotationZ(math::float3& p, float angle) {
-	math::float3x3 rotZ;
-	rotZ[0][0] = math::Cos(angle);	rotZ[0][1] = -math::Sin(angle);	rotZ[0][2] = 0;
-	rotZ[1][0] = math::Sin(angle);	rotZ[1][1] = math::Cos(angle);	rotZ[1][2] = 0;
-	rotZ[2][0] = 0;					rotZ[2][1] = 0;					rotZ[2][2] = 1;
-	p = rotZ * p;
-}
-*/
 
 
 bool  ModuleCamera::Init() { // ----------------------------------------------------------------
@@ -48,9 +28,6 @@ bool  ModuleCamera::Init() { // ------------------------------------------------
 	camPos = math::float3(0, 1, 8);
 	distCamVrp = 2.f;
 	fwd = math::float3(0, 0, -1);
-	//vrp = camPos + fwd * distCamVrp;
-
-	//vrp = math::float3(0, 0, 0);
 	up = math::float3(0, 1, 0);
 
 	frustum.type = FrustumType::PerspectiveFrustum;
@@ -72,7 +49,6 @@ bool  ModuleCamera::Init() { // ------------------------------------------------
 
 	view = frustum.ViewMatrix();
 	projection = frustum.ProjectionMatrix();
-	//UpdateProjection();
 
 	pressingRightMouse = false;
 	lastMouse = App->input->mouse_position;
@@ -89,18 +65,31 @@ update_status   ModuleCamera::Update() {
 	else movementSpeed = speed1;
 	
 	
-
-	// arrow Y rotations
+	// arrow rotations
 	if (App->input->keyboard[SDL_SCANCODE_LEFT]) {
-		Quat pitchRotMat = Quat::RotateAxisAngle(Yaxis, rotationSpeed);
+		Quat pitchRotMat = Quat::RotateAxisAngle(Yaxis, rotationSpeed * 10);
 		fwd = (pitchRotMat * fwd).Normalized();
-		side = (frustum.WorldRight()).Normalized();
+		side = (pitchRotMat * side).Normalized();
+		up = (pitchRotMat * up).Normalized();
 		cameraChanged = true;
 	}
 	if (App->input->keyboard[SDL_SCANCODE_RIGHT]) {
-		Quat pitchRotMat = Quat::RotateAxisAngle(Yaxis, -rotationSpeed);
+		Quat pitchRotMat = Quat::RotateAxisAngle(Yaxis, -rotationSpeed * 10);
 		fwd = (pitchRotMat * fwd).Normalized();
-		side = (frustum.WorldRight()).Normalized();
+		side = (pitchRotMat * side).Normalized();
+		up = (pitchRotMat * up).Normalized();
+		cameraChanged = true;
+	}
+	if (App->input->keyboard[SDL_SCANCODE_UP]) {
+		Quat pitchRotMat = Quat::RotateAxisAngle(side, rotationSpeed * 10);
+		fwd = (pitchRotMat * fwd).Normalized();
+		up = (side.Cross(fwd)).Normalized();
+		cameraChanged = true;
+	}
+	if (App->input->keyboard[SDL_SCANCODE_DOWN]) {
+		Quat pitchRotMat = Quat::RotateAxisAngle(side, -rotationSpeed * 10);
+		fwd = (pitchRotMat * fwd).Normalized();
+		up = (side.Cross(fwd)).Normalized();
 		cameraChanged = true;
 	}
 
@@ -145,6 +134,7 @@ update_status   ModuleCamera::Update() {
 			rot = Quat::RotateAxisAngle(Yaxis, -restaMouse.x * rotationSpeed);
 			fwd = (rot * fwd).Normalized();
 			side = (rot * side).Normalized();
+			up = (rot * up).Normalized();
 
 			rot = Quat::RotateAxisAngle(side, -restaMouse.y * rotationSpeed);
 			fwd = (rot * fwd).Normalized();
@@ -158,14 +148,6 @@ update_status   ModuleCamera::Update() {
 	else {
 		pressingRightMouse = false;
 	}
-	/*
-	if (App->input->keyboard[SDL_SCANCODE_UP]) {
-		Quat pitchRotMat = Quat::RotateAxisAngle(side, rotationSpeed);
-		fwd = (pitchRotMat * fwd).Normalized();
-		up = (side.Cross(fwd)).Normalized();
-		cameraChanged = true;
-	}
-	*/
 	
 	
 	if (cameraChanged) {
