@@ -176,6 +176,8 @@ bool ModuleModelLoader::LoadNewModel(char* path) {
 	App->menu->console.AddLog(b);
 	sprintf(b, "Bounding box min: (%f, %f, %f) \n", boundingBox->MinX(), boundingBox->MinY(), boundingBox->MinZ());
 	App->menu->console.AddLog(b);
+	sprintf(b, "Center point: (%f, %f, %f) \n", boundingBox->CenterPoint().x, boundingBox->CenterPoint().y, boundingBox->CenterPoint().z);
+	App->menu->console.AddLog(b);
 
 	modelLoaded = true;
 	return true;

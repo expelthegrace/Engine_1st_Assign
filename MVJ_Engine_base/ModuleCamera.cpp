@@ -5,6 +5,7 @@
 #include "ModuleInput.h"
 #include "ModuleMenu.h"
 #include "SDL.h"
+#include "ModuleModelLoader.h"
 
 
 ModuleCamera::ModuleCamera()
@@ -23,7 +24,7 @@ bool  ModuleCamera::Init() { // ------------------------------------------------
 	speed1 = 0.1;
 	speed2 = speed1 * 3.5;
 	movementSpeed = speed1;
-	rotationSpeed = 0.002;
+	rotationSpeed = 0.0015;
 
 	camPos = math::float3(0, 1, 8);
 	distCamVrp = 2.f;
@@ -64,6 +65,11 @@ update_status   ModuleCamera::Update() {
 	}
 	else movementSpeed = speed1;
 	
+	if (App->input->keyboard[SDL_SCANCODE_F]) {
+		FocusModel();
+		cameraChanged = true;
+	}
+
 	
 	// arrow rotations
 	if (App->input->keyboard[SDL_SCANCODE_LEFT]) {
@@ -131,16 +137,18 @@ update_status   ModuleCamera::Update() {
 
 			Quat rot;
 
-			rot = Quat::RotateAxisAngle(Yaxis, -restaMouse.x * rotationSpeed);
-			fwd = (rot * fwd).Normalized();
-			side = (rot * side).Normalized();
-			up = (rot * up).Normalized();
-
-			rot = Quat::RotateAxisAngle(side, -restaMouse.y * rotationSpeed);
-			fwd = (rot * fwd).Normalized();
-			up = (side.Cross(fwd)).Normalized();
-			
-						
+			if (restaMouse.x != 0) {
+				rot = Quat::RotateAxisAngle(Yaxis, -restaMouse.x * rotationSpeed);
+				fwd = (rot * fwd).Normalized();
+				side = (rot * side).Normalized();
+				up = (rot * up).Normalized();
+			}
+			if (restaMouse.y != 0) {
+				rot = Quat::RotateAxisAngle(side, -restaMouse.y * rotationSpeed);
+				fwd = (rot * fwd).Normalized();
+				up = (side.Cross(fwd)).Normalized();
+			}
+									
 			lastMouse = actualMouse;
 			cameraChanged = true;
 		}
@@ -162,9 +170,25 @@ bool            ModuleCamera::CleanUp() {
 	return true;
 }
 
+void ModuleCamera::FocusModel() {
+
+	LookAt(App->modelLoader->boundingBox->CenterPoint());
+
+}
+
+void ModuleCamera::LookAt(math::float3& target) {
+
+	float3 dir = (target - camPos).Normalized();
+	float3x3 rot = float3x3::LookAt(fwd, dir, up, Yaxis);
+	up = rot * up;
+	fwd = rot * fwd;
+	side = rot * side;
+
+}
+
 
 void ModuleCamera::UpdateFrustum() {
-	frustum.pos = camPos;//cam;
+	frustum.pos = camPos;
 	frustum.front = fwd.Normalized();
 	frustum.up = up.Normalized();
 
@@ -174,33 +198,6 @@ void ModuleCamera::UpdateFrustum() {
 }
 
 
-math::float4x4 ModuleCamera::lookAt(const math::float3& obss, const math::float3& vrpp, math::float3& upp) {
-	camPos = obss;
-
-	fwd = (vrpp - obss);
-	fwd = fwd.Normalized();
-
-	side = (fwd.Cross(upp));
-	side = side.Normalized();
-
-	math::float3 newUp = (side.Cross(fwd));
-	math::float4x4 viewAux;
-	//now that we have all the values, we generate the view matrix
-	viewAux[0][0] = side.x;         viewAux[0][1] = side.y;          viewAux[0][2] = side.z;       viewAux[3][0] = 0;
-	viewAux[1][0] = newUp.x;        viewAux[1][1] = newUp.y;         viewAux[1][2] = newUp.z;      viewAux[3][1] = 0;
-	viewAux[2][0] = fwd.x;          viewAux[2][1] = fwd.y;           viewAux[2][2] = fwd.z;        viewAux[3][2] = 0;
-	viewAux[0][3] = -side.Dot(obss); viewAux[1][3] = -newUp.Dot(obss); viewAux[2][3] = fwd.Dot(obss); viewAux[3][3] = 1;
-	
-	//updating cam values
-	up = newUp.Normalized();
-
-	//
-	frustum.pos = camPos;//cam;
-	frustum.front = fwd;
-	frustum.up = up;
-	
-return viewAux;
-}
 
 /*
 void ModuleCamera::setFoV(float fov){

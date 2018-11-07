@@ -30,6 +30,9 @@ public:
 	float speed2;
 	float rotationSpeed;
 
+	void LookAt(math::float3& target);
+	void FocusModel();
+
 	math::float3 up;
 	math::float3 fwd;
 	math::float3 side;

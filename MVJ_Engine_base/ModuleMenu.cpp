@@ -131,10 +131,10 @@ update_status ModuleMenu::Update() {
 		}
 		if (ImGui::CollapsingHeader("Camera"))
 		{
-			ImGui::BulletText("Camera position = ( %f, %f, %f )", App->camera->camPos.x, App->camera->camPos.y, App->camera->camPos.z);
-			ImGui::BulletText("Up directions = ( %f, %f, %f )", App->camera->up.x, App->camera->up.y, App->camera->up.z);
-			ImGui::BulletText("Forward directions= ( %f, %f, %f )", App->camera->fwd.x, App->camera->fwd.y, App->camera->fwd.z);
-			ImGui::BulletText("Side directions = ( %f, %f, %f )", App->camera->side.x, App->camera->side.y, App->camera->side.z);
+			ImGui::BulletText("Camera position: ( %f, %f, %f )", App->camera->camPos.x, App->camera->camPos.y, App->camera->camPos.z);
+			ImGui::BulletText("Up directions: ( %f, %f, %f )", App->camera->up.x, App->camera->up.y, App->camera->up.z);
+			ImGui::BulletText("Forward directions: ( %f, %f, %f )", App->camera->fwd.x, App->camera->fwd.y, App->camera->fwd.z);
+			ImGui::BulletText("Side directions: ( %f, %f, %f )", App->camera->side.x, App->camera->side.y, App->camera->side.z);
 		}
 		ImGui::End();
 	}
