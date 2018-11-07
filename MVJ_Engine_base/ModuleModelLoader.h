@@ -18,9 +18,8 @@ public:
 	//update_status   Update();
 	//bool            CleanUp();
 
-	//not in use
-	unsigned GenerateMeshData(const aiMesh* mesh, const unsigned iVbo);
-	unsigned GenerateMeshIndexes(const aiMesh* mesh, const unsigned i);
+
+	bool LoadNewModel(char* path);
 
 	//carlos
 	void            GenerateMeshes(const aiScene* scene);
@@ -41,7 +40,7 @@ public:
 	unsigned numVertices;
 	unsigned numFaces;
 
-	unsigned texture0;
+	bool modelLoaded;
 
 	const aiScene* scene;
 

@@ -33,6 +33,8 @@ public:
 	Punt mouse_position;
 	Punt mouse;
 
+	char* dropped_filedir;
+
 	int mouseWheel;
 
 private:

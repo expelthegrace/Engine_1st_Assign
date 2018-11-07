@@ -3,6 +3,8 @@
 #include "ModuleInput.h"
 #include "SDL/include/SDL.h"
 #include "ModuleRender.h"
+#include "ModuleWindow.h"
+#include "ModuleModelLoader.h"
 
 
 
@@ -76,6 +78,13 @@ update_status ModuleInput::PreUpdate()
 
 		case SDL_MOUSEWHEEL:
 			mouseWheel = event.wheel.y;
+			break;
+		
+		case (SDL_DROPFILE):      // In case if dropped file
+			dropped_filedir = event.drop.file;
+			SDL_free(dropped_filedir);    // Free dropped_filedir memory
+			App->modelLoader->LoadNewModel(dropped_filedir);
+			
 			break;
 		}
 	}

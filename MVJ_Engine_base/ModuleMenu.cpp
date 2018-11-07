@@ -32,7 +32,6 @@ bool ModuleMenu::Init() {
 	ms_log = new float[50];
 	lastFrameTime = SDL_GetTicks();
 	lastSecondTime = SDL_GetTicks();
-	console.AddLog("Model geometry:\n");
 	
 	showWindows = true;
 
