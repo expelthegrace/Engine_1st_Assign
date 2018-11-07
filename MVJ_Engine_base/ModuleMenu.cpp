@@ -9,6 +9,7 @@
 #include <SDL.h>
 #include "ModuleRenderExercise.h"
 #include "ModuleCamera.h"
+#include "ModuleInput.h"
 
 ModuleMenu::ModuleMenu()
 {
@@ -122,6 +123,12 @@ update_status ModuleMenu::Update() {
 			ImGui::PlotHistogram("", fps_log, 50, 0, title, 0.0f, 100.0f, ImVec2(350, 100));
 			sprintf_s(title, 50, "Milliseconds %.1f", ms_log[logMSIterator]);
 			ImGui::PlotHistogram("", ms_log, 50, 0, title, 0.0f, 100.0f, ImVec2(350, 100));
+		}
+		if (ImGui::CollapsingHeader("Variables"))
+		{
+			ImGui::Text("Mouse position: %i , %i", App->input->mouse_position.x, App->input->mouse_position.y);
+			ImGui::Text("Mousewheel force: %i", App->input->mouseWheel);
+			
 		}
 		ImGui::End();
 	}

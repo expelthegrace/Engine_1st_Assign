@@ -43,6 +43,7 @@ Application::~Application()
 bool Application::Init()
 {
 	bool ret = true;
+	exit = false;
 
 	for(list<Module*>::iterator it = modules.begin(); it != modules.end() && ret; ++it)
 		ret = (*it)->Init();
@@ -63,6 +64,8 @@ update_status Application::Update()
 
 	for(list<Module*>::iterator it = modules.begin(); it != modules.end() && ret == UPDATE_CONTINUE; ++it)
 		ret = (*it)->PostUpdate();
+
+	if (exit) ret = UPDATE_STOP;
 
 	return ret;
 }

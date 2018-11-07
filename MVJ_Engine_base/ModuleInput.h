@@ -33,5 +33,7 @@ public:
 	Punt mouse_position;
 	Punt mouse;
 
+	int mouseWheel;
+
 private:
 };

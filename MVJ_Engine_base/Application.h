@@ -40,6 +40,8 @@ public:
 	ModuleModelLoader* modelLoader = nullptr;
 	ModuleTimer* timer = nullptr;
 
+	bool exit;
+
 private:
 	std::list<Module*> modules;
 

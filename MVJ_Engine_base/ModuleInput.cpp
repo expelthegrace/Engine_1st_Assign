@@ -2,6 +2,7 @@
 #include "Application.h"
 #include "ModuleInput.h"
 #include "SDL/include/SDL.h"
+#include "ModuleRender.h"
 
 
 
@@ -10,7 +11,9 @@ ModuleInput::ModuleInput()
 
 // Destructor
 ModuleInput::~ModuleInput()
-{}
+{
+	delete[10] mouse_buttons;
+}
 
 // Called before render is available
 bool ModuleInput::Init()
@@ -25,6 +28,7 @@ bool ModuleInput::Init()
 		ret = false;
 	}
 
+	mouseWheel = 0;
 	mouse_buttons = new Uint8[10];
 
 
@@ -42,12 +46,19 @@ update_status ModuleInput::PreUpdate()
 		return UPDATE_STOP;
 	}
 	
-
+	mouseWheel = 0;
 	static SDL_Event event;
 	while (SDL_PollEvent(&event) != 0)
 	{
 		switch (event.type)
 		{
+		case SDL_QUIT:
+			App->exit = true;
+			break;
+		case SDL_WINDOWEVENT:
+			if (event.window.event == SDL_WINDOWEVENT_RESIZED || event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED)
+				App->renderer->WindowResized(event.window.data1, event.window.data2);
+			break;
 		case SDL_MOUSEBUTTONDOWN:
 			mouse_buttons[event.button.button - 1] = KEY_DOWN;
 			break;
@@ -57,15 +68,18 @@ update_status ModuleInput::PreUpdate()
 			break;
 
 		case SDL_MOUSEMOTION:
-			mouse_position.x = event.motion.xrel;
-			mouse_position.y = event.motion.yrel;
-			mouse.x = event.motion.x;
-			mouse.y = event.motion.y;
+			mouse.x = event.motion.xrel;
+			mouse.y = event.motion.yrel;
+			mouse_position.x = event.motion.x;
+			mouse_position.y = event.motion.y;
+			break;
+
+		case SDL_MOUSEWHEEL:
+			mouseWheel = event.wheel.y;
 			break;
 		}
-
-		
 	}
+
 
 	return UPDATE_CONTINUE;
 }

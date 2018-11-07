@@ -81,6 +81,7 @@ int main(int argc, char ** argv)
 
 		}
 		
+		/*
 		SDL_Event sdlEvent;
 
 		while (SDL_PollEvent(&sdlEvent) != 0)
@@ -98,6 +99,7 @@ int main(int argc, char ** argv)
 					break;
 			}
 		}
+		*/
 	}
 
 	delete App;
