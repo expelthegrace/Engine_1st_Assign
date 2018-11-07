@@ -1,6 +1,7 @@
 #pragma once
 #include "Module.h"
 #include "MathGeoLib.h"
+#include "ModuleInput.h"
 
 class ModuleCamera :
 	public Module
@@ -38,6 +39,7 @@ public:
 	
 	*/
 
+	Punt lastMouse, actualMouse;
 
 	math::float3 camPos;
 	float distCamVrp;
@@ -58,6 +60,8 @@ public:
 	Frustum frustum;
 	math::float4x4 view;
 	math::float4x4 projection;
+
+	bool pressingRightMouse;
 
 private:
 	bool cameraChanged;

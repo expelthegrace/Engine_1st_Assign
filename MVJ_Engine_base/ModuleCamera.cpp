@@ -43,7 +43,7 @@ bool  ModuleCamera::Init() { // ------------------------------------------------
 	speed1 = 0.1;
 	speed2 = speed1 * 3.5;
 	movementSpeed = speed1;
-	rotationSpeed = 0.04;
+	rotationSpeed = 0.002;
 
 	camPos = math::float3(0, 1, 8);
 	distCamVrp = 2.f;
@@ -74,6 +74,9 @@ bool  ModuleCamera::Init() { // ------------------------------------------------
 	projection = frustum.ProjectionMatrix();
 	//UpdateProjection();
 
+	pressingRightMouse = false;
+	lastMouse = App->input->mouse_position;
+
 	return true;
 }
 update_status   ModuleCamera::Update() {
@@ -85,31 +88,7 @@ update_status   ModuleCamera::Update() {
 	}
 	else movementSpeed = speed1;
 	
-	// WASD movement
-	if (App->input->keyboard[SDL_SCANCODE_E]) {
-		camPos += Yaxis*movementSpeed;
-		cameraChanged = true;
-	}
-	if (App->input->keyboard[SDL_SCANCODE_Q]) {
-		camPos -= Yaxis * movementSpeed;
-		cameraChanged = true;
-	}
-	if (App->input->keyboard[SDL_SCANCODE_W]) {
-		camPos += fwd * movementSpeed;
-		cameraChanged = true;
-	}
-	if (App->input->keyboard[SDL_SCANCODE_S]) {
-		camPos -= fwd * movementSpeed;
-		cameraChanged = true;
-	}
-	if (App->input->keyboard[SDL_SCANCODE_A]) {
-		camPos -= side * movementSpeed;
-		cameraChanged = true;
-	}
-	if (App->input->keyboard[SDL_SCANCODE_D]) {
-		camPos += side * movementSpeed;
-		cameraChanged = true;
-	}
+	
 
 	// arrow Y rotations
 	if (App->input->keyboard[SDL_SCANCODE_LEFT]) {
@@ -123,6 +102,61 @@ update_status   ModuleCamera::Update() {
 		fwd = (pitchRotMat * fwd).Normalized();
 		side = (frustum.WorldRight()).Normalized();
 		cameraChanged = true;
+	}
+
+	if (App->input->mouse_buttons[SDL_BUTTON_RIGHT - 1] == KEY_DOWN) {
+		// WASD movement
+		if (App->input->keyboard[SDL_SCANCODE_E]) {
+			camPos += Yaxis * movementSpeed;
+			cameraChanged = true;
+		}
+		if (App->input->keyboard[SDL_SCANCODE_Q]) {
+			camPos -= Yaxis * movementSpeed;
+			cameraChanged = true;
+		}
+		if (App->input->keyboard[SDL_SCANCODE_W]) {
+			camPos += fwd * movementSpeed;
+			cameraChanged = true;
+		}
+		if (App->input->keyboard[SDL_SCANCODE_S]) {
+			camPos -= fwd * movementSpeed;
+			cameraChanged = true;
+		}
+		if (App->input->keyboard[SDL_SCANCODE_A]) {
+			camPos -= side * movementSpeed;
+			cameraChanged = true;
+		}
+		if (App->input->keyboard[SDL_SCANCODE_D]) {
+			camPos += side * movementSpeed;
+			cameraChanged = true;
+		}
+
+		//mouse rotation
+		if (!pressingRightMouse) {
+			lastMouse = App->input->mouse_position;
+			pressingRightMouse = true;
+		}
+		else {
+			actualMouse = App->input->mouse_position;
+			Punt restaMouse = { actualMouse.x - lastMouse.x, actualMouse.y - lastMouse.y };
+
+			Quat rot;
+
+			rot = Quat::RotateAxisAngle(Yaxis, -restaMouse.x * rotationSpeed);
+			fwd = (rot * fwd).Normalized();
+			side = (rot * side).Normalized();
+
+			rot = Quat::RotateAxisAngle(side, -restaMouse.y * rotationSpeed);
+			fwd = (rot * fwd).Normalized();
+			up = (side.Cross(fwd)).Normalized();
+			
+						
+			lastMouse = actualMouse;
+			cameraChanged = true;
+		}
+	}
+	else {
+		pressingRightMouse = false;
 	}
 	/*
 	if (App->input->keyboard[SDL_SCANCODE_UP]) {
