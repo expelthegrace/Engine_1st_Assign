@@ -159,6 +159,7 @@ bool ModuleRender::CleanUp()
 void ModuleRender::WindowResized(unsigned width, unsigned height)
 {
     glViewport(0, 0, width, height); 
+	App->camera->ResizeFOV(width,height);
 }
 
 

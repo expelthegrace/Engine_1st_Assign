@@ -38,7 +38,11 @@ bool  ModuleCamera::Init() { // ------------------------------------------------
 	frustum.nearPlaneDistance = 0.1f;
 	frustum.farPlaneDistance = 100.0f;
 	frustum.verticalFov = math::pi / 4.0f;
-	float aspect = SCREEN_WIDTH / SCREEN_HEIGHT;
+
+	screenWidth = SCREEN_WIDTH;
+	screenHeight = SCREEN_HEIGHT;
+
+	float aspect = (float)screenWidth / (float)screenHeight;
 	frustum.horizontalFov = 2.f * atanf(tanf(frustum.verticalFov * 0.5f) *aspect);
 
 	side = (frustum.WorldRight()).Normalized();
@@ -55,6 +59,15 @@ bool  ModuleCamera::Init() { // ------------------------------------------------
 
 	return true;
 }
+
+void ModuleCamera::ResizeFOV(unsigned & newWidth, unsigned & newHeight) {
+	float aspect = (float)newWidth / (float)newHeight;
+	frustum.horizontalFov = 2.f * atanf(tanf(frustum.verticalFov * 0.5f) *aspect);
+	UpdateFrustum();
+	screenWidth = newWidth;
+	screenHeight = newHeight;
+}
+
 update_status   ModuleCamera::Update() {
 	//keyboard lecture
 	//const Uint8 *keyboard = NULL;

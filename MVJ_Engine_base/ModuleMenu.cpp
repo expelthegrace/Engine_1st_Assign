@@ -62,7 +62,7 @@ update_status ModuleMenu::PreUpdate() {
 
 update_status ModuleMenu::Update() {
 	
-	int consoleHeight = SCREEN_HEIGHT * 1.f/4;
+	int consoleHeight = App->camera->screenHeight * 1.f/4;
 	ImVec2 mainMenuSize;
 	// Menu superior
 	if (ImGui::BeginMainMenuBar())
@@ -104,13 +104,13 @@ update_status ModuleMenu::Update() {
 	}
 
 	if (showWindows) {
-		ImGui::SetNextWindowPos(ImVec2(0, SCREEN_HEIGHT - consoleHeight), ImGuiCond_FirstUseEver);
-		ImGui::SetNextWindowSize(ImVec2(SCREEN_WIDTH / 2, consoleHeight), ImGuiCond_FirstUseEver);
+		ImGui::SetNextWindowPos(ImVec2(0, App->camera->screenHeight - consoleHeight), ImGuiCond_FirstUseEver);
+		ImGui::SetNextWindowSize(ImVec2(App->camera->screenWidth / 2, consoleHeight), ImGuiCond_FirstUseEver);
 
 		console.Draw("Console");
 
 		ImGui::SetNextWindowPos(ImVec2(0, mainMenuSize.y), ImGuiCond_FirstUseEver);
-		ImGui::SetNextWindowSize(ImVec2(SCREEN_WIDTH / 4, SCREEN_HEIGHT - consoleHeight - mainMenuSize.y), ImGuiCond_FirstUseEver);
+		ImGui::SetNextWindowSize(ImVec2(App->camera->screenWidth / 4, App->camera->screenHeight - consoleHeight - mainMenuSize.y), ImGuiCond_FirstUseEver);
 		bool obert = true;
 		ImGui::Begin("Configuration", &obert);
 		if (ImGui::CollapsingHeader("Stats"))

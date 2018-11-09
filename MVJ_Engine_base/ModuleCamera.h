@@ -28,6 +28,9 @@ public:
 
 	void LookAt(math::float3& target);
 	void FocusModel();
+	void ResizeFOV(unsigned & newWidth, unsigned & newHeight);
+
+	int screenWidth, screenHeight;
 
 	math::float3 up;
 	math::float3 fwd;
