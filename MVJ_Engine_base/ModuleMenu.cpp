@@ -10,6 +10,7 @@
 #include "ModuleRenderExercise.h"
 #include "ModuleCamera.h"
 #include "ModuleInput.h"
+#include "ModuleModelLoader.h"
 
 ModuleMenu::ModuleMenu()
 {
@@ -143,25 +144,41 @@ update_status ModuleMenu::Update() {
 	}
 
 	if (showWindows) {
-		ImGui::SetNextWindowPos(ImVec2(0, App->camera->screenHeight - consoleHeight), ImGuiCond_FirstUseEver);
+		ImGui::SetNextWindowPos(ImVec2(App->camera->screenWidth / 4, App->camera->screenHeight - consoleHeight), ImGuiCond_FirstUseEver);
 		ImGui::SetNextWindowSize(ImVec2(App->camera->screenWidth / 2, consoleHeight), ImGuiCond_FirstUseEver);
 
 		console.Draw("Console");
 
 		ImGui::SetNextWindowPos(ImVec2(0, mainMenuSize.y), ImGuiCond_FirstUseEver);
-		ImGui::SetNextWindowSize(ImVec2(App->camera->screenWidth / 4, App->camera->screenHeight - consoleHeight - mainMenuSize.y), ImGuiCond_FirstUseEver);
+		ImGui::SetNextWindowSize(ImVec2(App->camera->screenWidth / 4, (App->camera->screenHeight - mainMenuSize.y)/2), ImGuiCond_FirstUseEver);
 		bool obert = true;
-		ImGui::Begin("Configuration", &obert);
-		if (ImGui::CollapsingHeader("Stats"))
+		ImGui::Begin("Properties", &obert);
+			
+		if (ImGui::CollapsingHeader("Transformation"))
 		{
-			ImGui::Text("Application Time = %d", SDL_GetTicks() / 1000);
-			char* title = new char[50];
-			updateFramerates();
-			sprintf_s(title, 50, "Framerate %.1f", fps_log[logFPSIterator]);
-			ImGui::PlotHistogram("", fps_log, 50, 0, title, 0.0f, 100.0f, ImVec2(350, 100));
-			sprintf_s(title, 50, "Milliseconds %.1f", ms_log[logMSIterator]);
-			ImGui::PlotHistogram("", ms_log, 50, 0, title, 0.0f, 100.0f, ImVec2(350, 100));
+			float v3pos [3] = { App->modelLoader->modelPosition.x,App->modelLoader->modelPosition.y,App->modelLoader->modelPosition.z };
+			ImGui::InputFloat3("Position", v3pos);
+			float v3rot[3] = { App->modelLoader->modelRotation.x,App->modelLoader->modelRotation.y,App->modelLoader->modelRotation.z };
+			ImGui::InputFloat3("Rotation", v3rot);
+			float v3scale[3] = { App->modelLoader->modelScale.x,App->modelLoader->modelScale.y,App->modelLoader->modelScale.z };
+			ImGui::InputFloat3("Scale", v3scale);
+						
 		}
+		if (ImGui::CollapsingHeader("Geometry"))
+		{
+			ImGui::Text("Number of triangles: %i \n",App->modelLoader->numFaces);
+		}
+		if (ImGui::CollapsingHeader("Texture"))
+		{
+			ImGui::Checkbox("Draw texture", &App->renderer->renderTexture);
+		}
+
+		ImGui::End();
+
+		ImGui::SetNextWindowPos(ImVec2(0, (App->camera->screenHeight - mainMenuSize.y) / 2), ImGuiCond_FirstUseEver);
+		ImGui::SetNextWindowSize(ImVec2(App->camera->screenWidth / 4, (App->camera->screenHeight - mainMenuSize.y) / 2 + mainMenuSize.y), ImGuiCond_FirstUseEver);
+		ImGui::Begin("Configuration", &obert);
+
 		if (ImGui::CollapsingHeader("Input"))
 		{
 			ImGui::Text("Mouse position: %i , %i", App->input->mouse_position.x, App->input->mouse_position.y);
@@ -199,11 +216,17 @@ update_status ModuleMenu::Update() {
 			}			
 
 		}
-
-		if (ImGui::CollapsingHeader("Texture"))
-		{		
-			ImGui::Checkbox("Draw texture", &App->renderer->renderTexture);
+		if (ImGui::CollapsingHeader("Stats"))
+		{
+			ImGui::Text("Application Time = %d", SDL_GetTicks() / 1000);
+			char* title = new char[50];
+			updateFramerates();
+			sprintf_s(title, 50, "Framerate %.1f", fps_log[logFPSIterator]);
+			ImGui::PlotHistogram("", fps_log, 50, 0, title, 0.0f, 100.0f, ImVec2(350, 100));
+			sprintf_s(title, 50, "Milliseconds %.1f", ms_log[logMSIterator]);
+			ImGui::PlotHistogram("", ms_log, 50, 0, title, 0.0f, 100.0f, ImVec2(350, 100));
 		}
+	
 		ImGui::End();
 	}
 

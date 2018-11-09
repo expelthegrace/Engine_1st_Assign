@@ -155,6 +155,9 @@ bool ModuleModelLoader::LoadNewModel(char* path) {
 		GenerateMaterials(scene);
 	}
 
+	modelPosition = boundingBox->CenterPoint();
+	modelScale = { 1,1,1 };
+	modelRotation = { 0,0,0 };
 	
 
 	//Console data update

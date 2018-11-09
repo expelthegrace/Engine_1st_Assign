@@ -34,6 +34,7 @@ public:
 	unsigned*  numVerticesMesh;
 	unsigned*  numIndexesMesh;
 
+	float3 modelRotation, modelScale, modelPosition;
 
 	char* b = new char[50];
 
