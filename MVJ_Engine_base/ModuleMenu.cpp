@@ -34,7 +34,46 @@ bool ModuleMenu::Init() {
 	lastSecondTime = SDL_GetTicks();
 	
 	showWindows = true;
+	ImGui::StyleColorsDark();
 
+	ImVec4 olive = { 0.6f,0.6f,0.0f,1.0f };
+	ImVec4 oliveLighter = { 0.7f,0.7f,0.1f,1.0f };
+	ImVec4 oliveLTrans = { 0.5f,0.5f,0.f,.7f };
+
+
+	ImGui::GetStyle().Colors[ImGuiCol_WindowBg] = { 0.1f,0.1f,0.1f,0.7f };
+	//ImGui::GetStyle().Colors[ImGuiCol_ScrollbarBg] = { 0.05f, 0.05f,0.0f,1.0f };
+	//ImGui::GetStyle().Colors[ImGuiCol_TitleBg] = { 0.05f, 0.05f,0.0f,1.0f };
+	ImGui::GetStyle().Colors[ImGuiCol_TitleBgActive] = { 0.2f, 0.2f,0.1f,1.0f };
+
+	ImGui::GetStyle().Colors[ImGuiCol_::ImGuiCol_Header] = olive;
+	ImGui::GetStyle().Colors[ImGuiCol_::ImGuiCol_HeaderHovered] = oliveLighter;
+
+	ImGui::GetStyle().Colors[ImGuiCol_::ImGuiCol_Button] = olive;
+	ImGui::GetStyle().Colors[ImGuiCol_::ImGuiCol_ButtonHovered] = oliveLighter;
+
+	ImGui::GetStyle().Colors[ImGuiCol_::ImGuiCol_FrameBg] = oliveLTrans;
+	ImGui::GetStyle().Colors[ImGuiCol_::ImGuiCol_FrameBgActive] = oliveLTrans;
+	ImGui::GetStyle().Colors[ImGuiCol_::ImGuiCol_FrameBgHovered] = oliveLTrans;
+	/*
+	ImGui::GetStyle().Colors[ImGuiCol_::ImGuiCol_Tab] = { 0.3f,0.7f,0.0f,1.0f };
+	ImGui::GetStyle().Colors[ImGuiCol_::ImGuiCol_TabHovered] = { 0.8f,0.35f,0.0f,1.0f };
+	ImGui::GetStyle().Colors[ImGuiCol_::ImGuiCol_TabUnfocused] = { 0.5f,0.2f,0.0f,1.0f };
+	ImGui::GetStyle().Colors[ImGuiCol_::ImGuiCol_TabUnfocusedActive] = { 0.65f,0.25f,0.0f,1.0f };
+	ImGui::GetStyle().Colors[ImGuiCol_::ImGuiCol_TabActive] = { 0.9f,0.45f,0.0f,1.0f };
+
+	ImGui::GetStyle().Colors[ImGuiCol_::ImGuiCol_Header] = { 0.8f,0.37f,0.0f,1.0f };
+	ImGui::GetStyle().Colors[ImGuiCol_::ImGuiCol_HeaderActive] = { 1.0f,0.6f,0.0f,1.0f };
+	ImGui::GetStyle().Colors[ImGuiCol_::ImGuiCol_HeaderHovered] = { 0.95f,0.5f,0.0f,1.0f };
+
+	ImGui::GetStyle().Colors[ImGuiCol_::ImGuiCol_Button] = { 0.9f,0.45f,0.0f,1.0f };
+	ImGui::GetStyle().Colors[ImGuiCol_::ImGuiCol_ButtonActive] = { 0.8f,0.37f,0.0f,1.0f };
+	ImGui::GetStyle().Colors[ImGuiCol_::ImGuiCol_ButtonHovered] = { 0.95f,0.5f,0.0f,1.0f };
+
+	ImGui::GetStyle().Colors[ImGuiCol_::ImGuiCol_FrameBg] = { 1.0f,0.6f,0.0f,0.2f };
+	ImGui::GetStyle().Colors[ImGuiCol_::ImGuiCol_FrameBgActive] = { 0.8f,0.37f,0.0f,0.5f };
+	ImGui::GetStyle().Colors[ImGuiCol_::ImGuiCol_FrameBgHovered] = { 0.95f,0.5f,0.0f,0.5f };
+	*/
 	return true;
 }
 
@@ -140,7 +179,7 @@ update_status ModuleMenu::Update() {
 			ImGui::InputFloat("Far Plane", &App->camera->frustum.farPlaneDistance);
 			ImGui::NewLine();
 			ImGui::Checkbox("Show grid", &App->renderer->showGrid);
-			ImGui::Checkbox("Draw texture", &App->renderer->renderTexture);
+			
 		
 		}
 		if (ImGui::CollapsingHeader("Window"))
@@ -162,9 +201,8 @@ update_status ModuleMenu::Update() {
 		}
 
 		if (ImGui::CollapsingHeader("Texture"))
-		{
-			
-
+		{		
+			ImGui::Checkbox("Draw texture", &App->renderer->renderTexture);
 		}
 		ImGui::End();
 	}
