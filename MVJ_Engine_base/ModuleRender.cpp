@@ -22,6 +22,8 @@ ModuleRender::~ModuleRender()
 // Called before render is available
 bool ModuleRender::Init()
 {
+	renderTexture = true;
+	showGrid = true;
 	LOG("Creating Renderer context");
 
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
@@ -75,6 +77,11 @@ update_status ModuleRender::Update()
 	glUniformMatrix4fv(glGetUniformLocation(App->shaderProgram->programModel,
 		"proj"), 1, GL_TRUE, &App->camera->projection[0][0]);
 
+
+	GLint drawText = glGetUniformLocation(App->shaderProgram->programModel, "drawTexture");
+	if (renderTexture) glUniform1i(drawText, 1);
+	else  glUniform1i(drawText, 0);
+
 	for (int i = 0; i < App->modelLoader->scene->mNumMeshes; ++i) {
 	
 
@@ -119,19 +126,20 @@ update_status ModuleRender::Update()
 	float white[4] = { 1, 1, 1, 1 };
 	glUniform4fv(linesGrid, 1, white);
 
-
 	glLineWidth(1.0f);
 
-	glBegin(GL_LINES);
-	float d = 200.f;
+	if (showGrid) {
+		glBegin(GL_LINES);
+		float d = 200.f;
 
-	for (float i = -d; i <= d; i += 1.0f) {
-		glVertex3f(i, 0.0f, -d);
-		glVertex3f(i, 0.0f, d);
-		glVertex3f(-d, 0.0f, i);
-		glVertex3f(d, 0.0f, i);
+		for (float i = -d; i <= d; i += 1.0f) {
+			glVertex3f(i, 0.0f, -d);
+			glVertex3f(i, 0.0f, d);
+			glVertex3f(-d, 0.0f, i);
+			glVertex3f(d, 0.0f, i);
+		}
+		glEnd();
 	}
-	glEnd();
 
 	glUseProgram(0);
 	

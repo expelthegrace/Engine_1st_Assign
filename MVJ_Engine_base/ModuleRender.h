@@ -22,6 +22,8 @@ public:
 
 	math::float4x4 model; 
 
+	bool renderTexture, showGrid;
+
 	void* context;
 private:
 	

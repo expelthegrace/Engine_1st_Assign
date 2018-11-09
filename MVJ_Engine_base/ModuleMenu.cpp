@@ -72,9 +72,9 @@ update_status ModuleMenu::Update() {
 		{
 			if (ImGui::CollapsingHeader("Window options"))
 			{
-				ImGui::Checkbox("Show windows", &showWindows); ImGui::SameLine(150);
+				ImGui::Checkbox("Show windows", &showWindows); 
 			}
-			ImGui::NewLine();
+			
 			if (ImGui::Button("Go to GitHub")) {
 				ShellExecute(NULL, "open", "https://github.com/expelthegrace/Engine_1st_Assign", NULL, NULL, SW_SHOWNORMAL);
 			}
@@ -138,6 +138,10 @@ update_status ModuleMenu::Update() {
 			ImGui::NewLine();
 			ImGui::InputFloat("Near Plane", &App->camera->frustum.nearPlaneDistance);
 			ImGui::InputFloat("Far Plane", &App->camera->frustum.farPlaneDistance);
+			ImGui::NewLine();
+			ImGui::Checkbox("Show grid", &App->renderer->showGrid);
+			ImGui::Checkbox("Draw texture", &App->renderer->renderTexture);
+		
 		}
 		if (ImGui::CollapsingHeader("Window"))
 		{
