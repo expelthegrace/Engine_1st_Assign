@@ -74,7 +74,7 @@ update_status ModuleMenu::Update() {
 			{
 				ImGui::Checkbox("Show windows", &showWindows); ImGui::SameLine(150);
 			}
-
+			ImGui::NewLine();
 			if (ImGui::Button("Go to GitHub")) {
 				ShellExecute(NULL, "open", "https://github.com/expelthegrace/Engine_1st_Assign", NULL, NULL, SW_SHOWNORMAL);
 			}
@@ -123,7 +123,7 @@ update_status ModuleMenu::Update() {
 			sprintf_s(title, 50, "Milliseconds %.1f", ms_log[logMSIterator]);
 			ImGui::PlotHistogram("", ms_log, 50, 0, title, 0.0f, 100.0f, ImVec2(350, 100));
 		}
-		if (ImGui::CollapsingHeader("Variables"))
+		if (ImGui::CollapsingHeader("Input"))
 		{
 			ImGui::Text("Mouse position: %i , %i", App->input->mouse_position.x, App->input->mouse_position.y);
 			ImGui::Text("Mousewheel force: %i", App->input->mouseWheel);
@@ -135,6 +135,32 @@ update_status ModuleMenu::Update() {
 			ImGui::BulletText("Up directions: ( %f, %f, %f )", App->camera->up.x, App->camera->up.y, App->camera->up.z);
 			ImGui::BulletText("Forward directions: ( %f, %f, %f )", App->camera->fwd.x, App->camera->fwd.y, App->camera->fwd.z);
 			ImGui::BulletText("Side directions: ( %f, %f, %f )", App->camera->side.x, App->camera->side.y, App->camera->side.z);
+			ImGui::NewLine();
+			ImGui::InputFloat("Near Plane", &App->camera->frustum.nearPlaneDistance);
+			ImGui::InputFloat("Far Plane", &App->camera->frustum.farPlaneDistance);
+		}
+		if (ImGui::CollapsingHeader("Window"))
+		{
+			int lastW = App->camera->screenWidth;
+			int lastH = App->camera->screenHeight;
+			int actualW = App->camera->screenWidth;
+			int actualH = App->camera->screenHeight;
+
+
+			ImGui::InputInt("Window width", &actualW,20,200);
+			ImGui::InputInt("Window height", &actualH,20,200);
+
+			if (actualW != lastW || actualH != lastH) {
+				App->renderer->WindowResized(actualW, actualH);
+				SDL_SetWindowSize(App->window->window, actualW, actualH);
+			}			
+
+		}
+
+		if (ImGui::CollapsingHeader("Texture"))
+		{
+			
+
 		}
 		ImGui::End();
 	}
