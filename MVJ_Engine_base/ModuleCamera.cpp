@@ -146,21 +146,16 @@ update_status   ModuleCamera::Update() {
 			Quat rot;
 			// orbit
 			if (App->input->keyboard[SDL_SCANCODE_LALT]) {				
-
 				if (restaMouse.x != 0) {
 					rot = Quat::RotateAxisAngle(Yaxis, -restaMouse.x * rotationSpeed);					
 					distance = rot * distance;
-					camPos = App->modelLoader->modelPosition + distance;
-					LookAt(App->modelLoader->modelPosition);
-
 				}	
 				if (restaMouse.y != 0) {
 					rot = Quat::RotateAxisAngle(side, -restaMouse.y * rotationSpeed);
 					distance = rot * distance;
-					camPos = App->modelLoader->modelPosition + distance;
-					LookAt(App->modelLoader->modelPosition);
-
 				}
+				camPos = App->modelLoader->modelPosition + distance;
+				LookAt(App->modelLoader->modelPosition);
 			}
 			else {		
 				if (restaMouse.x != 0) {
@@ -174,11 +169,9 @@ update_status   ModuleCamera::Update() {
 					fwd = (rot * fwd).Normalized();
 					up = (side.Cross(fwd)).Normalized();
 				}
-
 			}
 			lastMouse = actualMouse;
-			cameraChanged = true;
-			
+			cameraChanged = true;			
 		}
 	}
 	else {
