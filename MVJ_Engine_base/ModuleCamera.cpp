@@ -142,23 +142,43 @@ update_status   ModuleCamera::Update() {
 		else {
 			actualMouse = App->input->mouse_position;
 			Punt restaMouse = { actualMouse.x - lastMouse.x, actualMouse.y - lastMouse.y };
-
+			float3 distance = camPos - App->modelLoader->modelPosition;
 			Quat rot;
+			// orbit
+			if (App->input->keyboard[SDL_SCANCODE_LALT]) {				
 
-			if (restaMouse.x != 0) {
-				rot = Quat::RotateAxisAngle(Yaxis, -restaMouse.x * rotationSpeed);
-				fwd = (rot * fwd).Normalized();
-				side = (rot * side).Normalized();
-				up = (rot * up).Normalized();
+				if (restaMouse.x != 0) {
+					rot = Quat::RotateAxisAngle(Yaxis, -restaMouse.x * rotationSpeed);					
+					distance = rot * distance;
+					camPos = App->modelLoader->modelPosition + distance;
+					LookAt(App->modelLoader->modelPosition);
+
+				}	
+				if (restaMouse.y != 0) {
+					rot = Quat::RotateAxisAngle(side, -restaMouse.y * rotationSpeed);
+					distance = rot * distance;
+					camPos = App->modelLoader->modelPosition + distance;
+					LookAt(App->modelLoader->modelPosition);
+
+				}
 			}
-			if (restaMouse.y != 0) {
-				rot = Quat::RotateAxisAngle(side, -restaMouse.y * rotationSpeed);
-				fwd = (rot * fwd).Normalized();
-				up = (side.Cross(fwd)).Normalized();
+			else {		
+				if (restaMouse.x != 0) {
+					rot = Quat::RotateAxisAngle(Yaxis, -restaMouse.x * rotationSpeed);
+					fwd = (rot * fwd).Normalized();
+					side = (rot * side).Normalized();
+					up = (rot * up).Normalized();
+				}
+				if (restaMouse.y != 0) {
+					rot = Quat::RotateAxisAngle(side, -restaMouse.y * rotationSpeed);
+					fwd = (rot * fwd).Normalized();
+					up = (side.Cross(fwd)).Normalized();
+				}
+
 			}
-									
 			lastMouse = actualMouse;
 			cameraChanged = true;
+			
 		}
 	}
 	else {

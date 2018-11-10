@@ -66,7 +66,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>false</SDLCheck>
       <ExceptionHandling>Sync</ExceptionHandling>
-      <AdditionalIncludeDirectories>.\Assimp\include;./glew-2.1.0/include;./SDL/include;MathGeoLib/include;./IMGUI;.\IMGUI\misc\freetype</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\DevIL\include\IL;.\DevIL\include;.\Assimp\include;./glew-2.1.0/include;./SDL/include;MathGeoLib/include;./IMGUI;.\IMGUI\misc\freetype</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -74,7 +74,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <SubSystem>Windows</SubSystem>
       <AdditionalLibraryDirectories>.\Assimp\lib\x86;.\DevIL\lib\x86\Release;./glew-2.1.0/lib/Release/Win32</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glew32.lib;opengl32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;ILU.lib;assimp.lib;ILUT.lib;DevIL.lib;DevIL.lib;ILUT.lib;ILU.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>glew32.lib;opengl32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;ILU.lib;assimp.lib;ILUT.lib;DevIL.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
