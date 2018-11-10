@@ -12,6 +12,7 @@
 #include "ModuleInput.h"
 #include "ModuleModelLoader.h"
 
+
 ModuleMenu::ModuleMenu()
 {
 }
@@ -75,6 +76,8 @@ bool ModuleMenu::Init() {
 	ImGui::GetStyle().Colors[ImGuiCol_::ImGuiCol_FrameBgActive] = { 0.8f,0.37f,0.0f,0.5f };
 	ImGui::GetStyle().Colors[ImGuiCol_::ImGuiCol_FrameBgHovered] = { 0.95f,0.5f,0.0f,0.5f };
 	*/
+
+
 	return true;
 }
 
@@ -109,38 +112,24 @@ update_status ModuleMenu::Update() {
 	{
 		mainMenuSize = ImGui::GetWindowSize();
 		if (ImGui::BeginMenu("Menu"))
-		{
-			if (ImGui::CollapsingHeader("Window options"))
-			{
-				ImGui::Checkbox("Show windows", &showWindows); 
-			}
-			
+		{			
+			ImGui::Checkbox("Show windows", &showWindows); 			
+			ImGui::EndMenu();
+		}
+		if (ImGui::BeginMenu("About")) {
+			bool openAbout = true;		
+			ImGui::Text("Engine name: Thomas The Engine (TTE) \nCreated by : Marc Palomar Soler \nProject for the UPC University Master");		
 			if (ImGui::Button("Go to GitHub")) {
 				ShellExecute(NULL, "open", "https://github.com/expelthegrace/Engine_1st_Assign", NULL, NULL, SW_SHOWNORMAL);
 			}
-
 			ImGui::EndMenu();
 		}
-		if (ImGui::Button("Quit")) {
+		if (ImGui::MenuItem("Quit")) {
 			return UPDATE_STOP;
 		}
-
+	
 		ImGui::EndMainMenuBar();
-		/*
-		if (ImGui::BeginMenu("Help"))
-		{
-			if (ImGui::Button("Documentation")) {
-				ShellExecute(NULL, "open", "https://github.com/RogerNogue/MVJ_Engine_base/wiki", NULL, NULL, SW_SHOWNORMAL);
-			}
-			if (ImGui::Button("Download latest")) {
-				ShellExecute(NULL, "open", "https://github.com/RogerNogue/MVJ_Engine_base/releases", NULL, NULL, SW_SHOWNORMAL);
-			}
-			if (ImGui::Button("Report a bug")) {
-				ShellExecute(NULL, "open", "https://github.com/RogerNogue/MVJ_Engine_base/issues", NULL, NULL, SW_SHOWNORMAL);
-			}
-			ImGui::EndMenu();
-		}
-		*/		
+		
 	}
 
 	if (showWindows) {
@@ -216,7 +205,7 @@ update_status ModuleMenu::Update() {
 			}			
 
 		}
-		if (ImGui::CollapsingHeader("Stats"))
+		if (ImGui::CollapsingHeader("Information"))
 		{
 			ImGui::Text("Application Time = %d", SDL_GetTicks() / 1000);
 			char* title = new char[50];
@@ -225,6 +214,15 @@ update_status ModuleMenu::Update() {
 			ImGui::PlotHistogram("", fps_log, 50, 0, title, 0.0f, 100.0f, ImVec2(350, 100));
 			sprintf_s(title, 50, "Milliseconds %.1f", ms_log[logMSIterator]);
 			ImGui::PlotHistogram("", ms_log, 50, 0, title, 0.0f, 100.0f, ImVec2(350, 100));
+
+			ImGui::Separator();
+			ImGui::Text("OpenGL version: %s", glGetString(GL_VERSION));
+
+			SDL_version version;
+			SDL_GetVersion(&version);
+			ImGui::Text("SDL version: %d.%d.%d \n", version.major, version.minor, version.patch);
+			ImGui::Text("ImGui version: %s \n", ImGui::GetVersion());
+
 		}
 	
 		ImGui::End();
