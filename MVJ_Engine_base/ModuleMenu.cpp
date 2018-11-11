@@ -13,6 +13,7 @@
 #include "ModuleModelLoader.h"
 
 
+
 ModuleMenu::ModuleMenu()
 {
 }
@@ -30,8 +31,10 @@ bool ModuleMenu::Init() {
 	//setting up the vars for the logs
 	logMSIterator = 0;
 	logFPSIterator = 0;
+	logMemoryIterator = 0;
 	fps_log = new float[50];
 	ms_log = new float[50];
+	memory_log = new float[50];
 	lastFrameTime = SDL_GetTicks();
 	lastSecondTime = SDL_GetTicks();
 	
@@ -91,6 +94,10 @@ void ModuleMenu::updateFramerates() {
 	//ms calculation
 	ms_log[logMSIterator] = timeElapsed;
 	lastFrameTime = SDL_GetTicks();
+
+	memory_log[logMemoryIterator] = (float)pmc.WorkingSetSize / 1000000;
+	++logMemoryIterator;
+	if (logMemoryIterator > 49) logMemoryIterator = 0;
 	//iterator increase
 	++logMSIterator;
 	if (logMSIterator > 49) logMSIterator = 0;
@@ -105,6 +112,12 @@ update_status ModuleMenu::PreUpdate() {
 
 update_status ModuleMenu::Update() {
 	
+	
+	memInfo.dwLength = sizeof(MEMORYSTATUSEX);
+	GlobalMemoryStatusEx(&memInfo);
+
+	GetProcessMemoryInfo(GetCurrentProcess(), &pmc, sizeof(pmc));
+
 	int consoleHeight = App->camera->screenHeight * 1.f/4;
 	ImVec2 mainMenuSize;
 	// Menu superior
@@ -210,14 +223,21 @@ update_status ModuleMenu::Update() {
 			ImGui::Text("Application Time = %d", SDL_GetTicks() / 1000);
 			char* title = new char[50];
 			updateFramerates();
+
 			sprintf_s(title, 50, "Framerate %.1f", fps_log[logFPSIterator]);
 			ImGui::PlotHistogram("", fps_log, 50, 0, title, 0.0f, 100.0f, ImVec2(350, 100));
+
 			sprintf_s(title, 50, "Milliseconds %.1f", ms_log[logMSIterator]);
 			ImGui::PlotHistogram("", ms_log, 50, 0, title, 0.0f, 100.0f, ImVec2(350, 100));
 
-			ImGui::Separator();
-			ImGui::Text("OpenGL version: %s", glGetString(GL_VERSION));
+			sprintf_s(title, 50, "Memory used (MB)%.1f", memory_log[logMemoryIterator]);
+			ImGui::PlotHistogram("", memory_log, 50, 0, title, 0.0f, 200.f, ImVec2(350, 100));
 
+			ImGui::Separator();
+			ImGui::Text("Graphic card vendor: %s \n", glGetString(GL_VENDOR));
+			ImGui::Text("Graphic card used: %s \n", glGetString(GL_RENDERER));
+			ImGui::NewLine();
+			ImGui::Text("OpenGL version: %s", glGetString(GL_VERSION));
 			SDL_version version;
 			SDL_GetVersion(&version);
 			ImGui::Text("SDL version: %d.%d.%d \n", version.major, version.minor, version.patch);

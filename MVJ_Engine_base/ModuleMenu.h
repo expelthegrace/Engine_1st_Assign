@@ -3,6 +3,8 @@
 #include "Module.h"
 #include "Globals.h"
 #include "imgui.h"
+#include "windows.h"
+#include "psapi.h"
 
 class ModuleMenu :
 	public Module
@@ -50,10 +52,14 @@ public:
 	double lastSecondTime;
 	int logMSIterator;
 	int logFPSIterator;
+	int logMemoryIterator;
 	float* fps_log;
 	float* ms_log;
+	float* memory_log;
 	ExampleAppLog console;
-	SYSTEM_INFO siSysInfo;
+	
+	PROCESS_MEMORY_COUNTERS pmc;
+	MEMORYSTATUSEX memInfo;
 
 	char* b = new char[50];
 	bool showWindows;
