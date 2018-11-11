@@ -67,50 +67,50 @@ update_status ModuleRender::PreUpdate()
 // Called every draw update
 update_status ModuleRender::Update()
 {
-	
-	glUseProgram(App->shaderProgram->programModel);
+	if (App->modelLoader->scene != NULL) {
+		glUseProgram(App->shaderProgram->programModel);
 
-	glUniformMatrix4fv(glGetUniformLocation(App->shaderProgram->programModel,
-		"model"), 1, GL_TRUE, &model[0][0]);
-	glUniformMatrix4fv(glGetUniformLocation(App->shaderProgram->programModel,
-		"view"), 1, GL_TRUE, &App->camera->view[0][0]);
-	glUniformMatrix4fv(glGetUniformLocation(App->shaderProgram->programModel,
-		"proj"), 1, GL_TRUE, &App->camera->projection[0][0]);
+		glUniformMatrix4fv(glGetUniformLocation(App->shaderProgram->programModel,
+			"model"), 1, GL_TRUE, &model[0][0]);
+		glUniformMatrix4fv(glGetUniformLocation(App->shaderProgram->programModel,
+			"view"), 1, GL_TRUE, &App->camera->view[0][0]);
+		glUniformMatrix4fv(glGetUniformLocation(App->shaderProgram->programModel,
+			"proj"), 1, GL_TRUE, &App->camera->projection[0][0]);
 
 
-	GLint drawText = glGetUniformLocation(App->shaderProgram->programModel, "drawTexture");
-	if (renderTexture) glUniform1i(drawText, 1);
-	else  glUniform1i(drawText, 0);
+		GLint drawText = glGetUniformLocation(App->shaderProgram->programModel, "drawTexture");
+		if (renderTexture) glUniform1i(drawText, 1);
+		else  glUniform1i(drawText, 0);
 
-	for (int i = 0; i < App->modelLoader->scene->mNumMeshes; ++i) {
-	
+		for (int i = 0; i < App->modelLoader->scene->mNumMeshes; ++i) {
 
-		unsigned vboActual = App->modelLoader->vbos[i];
-		unsigned numVerticesActual = App->modelLoader->numVerticesMesh[i];
-		unsigned numIndexesActual = App->modelLoader->numIndexesMesh[i];
 
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, App->modelLoader->materials[App->modelLoader->textures[i]]);
-		glUniform1i(glGetUniformLocation(App->shaderProgram->programModel, "texture0"), 0);
+			unsigned vboActual = App->modelLoader->vbos[i];
+			unsigned numVerticesActual = App->modelLoader->numVerticesMesh[i];
+			unsigned numIndexesActual = App->modelLoader->numIndexesMesh[i];
 
-		glEnableVertexAttribArray(0);
-		glEnableVertexAttribArray(1);
-		glBindBuffer(GL_ARRAY_BUFFER, vboActual);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)(sizeof(float) * 3 * App->modelLoader->numVerticesMesh[i]));
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, App->modelLoader->ibos[i]);
-		glDrawElements(GL_TRIANGLES, numIndexesActual, GL_UNSIGNED_INT, nullptr);
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, App->modelLoader->materials[App->modelLoader->textures[i]]);
+			glUniform1i(glGetUniformLocation(App->shaderProgram->programModel, "texture0"), 0);
 
-		glDisableVertexAttribArray(0);
-		glDisableVertexAttribArray(1);
+			glEnableVertexAttribArray(0);
+			glEnableVertexAttribArray(1);
+			glBindBuffer(GL_ARRAY_BUFFER, vboActual);
+			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+			glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)(sizeof(float) * 3 * App->modelLoader->numVerticesMesh[i]));
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, App->modelLoader->ibos[i]);
+			glDrawElements(GL_TRIANGLES, numIndexesActual, GL_UNSIGNED_INT, nullptr);
 
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		glBindTexture(GL_TEXTURE_2D, 0);
-		
+			glDisableVertexAttribArray(0);
+			glDisableVertexAttribArray(1);
+
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+			glBindBuffer(GL_ARRAY_BUFFER, 0);
+			glBindTexture(GL_TEXTURE_2D, 0);
+
+		}
+		glUseProgram(0);
 	}
-	glUseProgram(0);
-
 	float3 colorWhite = { 1.,1.,1. };
 
 	glUseProgram(App->shaderProgram->programLines);

@@ -111,7 +111,7 @@ void ModuleModelLoader::GenerateMaterials(const aiScene* scene)
 
 		if (src_material->GetTexture(aiTextureType_DIFFUSE, 0, &file, &mapping, &uvindex) == AI_SUCCESS)
 		{
-			dst_material = App->textures->Load(file.data, false);
+			dst_material = App->textures->Load(file.C_Str(), false);
 		}
 
 		materials[i] = dst_material;
@@ -132,7 +132,7 @@ bool ModuleModelLoader::LoadNewModel(char* path) {
 	numVertices = 0;
 	numFaces = 0;
 
-	scene = aiImportFile(path, aiProcessPreset_TargetRealtime_MaxQuality | aiProcess_FixInfacingNormals);
+	scene = aiImportFile(path, aiProcess_Triangulate);
 	const char* errorMesage;
 
 	if (scene == nullptr) {

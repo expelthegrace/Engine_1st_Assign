@@ -231,7 +231,7 @@ update_status ModuleMenu::Update() {
 			ImGui::PlotHistogram("", ms_log, 50, 0, title, 0.0f, 100.0f, ImVec2(350, 100));
 
 			sprintf_s(title, 50, "Memory used (MB)%.1f", memory_log[logMemoryIterator]);
-			ImGui::PlotHistogram("", memory_log, 50, 0, title, 0.0f, 200.f, ImVec2(350, 100));
+			ImGui::PlotHistogram("", memory_log, 50, 0, title, 0.0f, 1000.f, ImVec2(350, 100));
 
 			ImGui::Separator();
 			ImGui::Text("Graphic card vendor: %s \n", glGetString(GL_VENDOR));
