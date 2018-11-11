@@ -2,6 +2,8 @@
 
 Created by Marc Palomar Soler
 
+Download the ReleaseBuild.rar to get the latest executable version.
+
 Project for the Videogames Design Master, Universitat Politècnica de Catalunya
 
 GitHub: https://github.com/expelthegrace/Engine_1st_Assign
