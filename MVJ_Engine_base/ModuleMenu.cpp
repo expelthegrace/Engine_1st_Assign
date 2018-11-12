@@ -146,13 +146,13 @@ update_status ModuleMenu::Update() {
 	}
 
 	if (showWindows) {
-		ImGui::SetNextWindowPos(ImVec2(App->camera->screenWidth / 4, App->camera->screenHeight - consoleHeight), ImGuiCond_FirstUseEver);
-		ImGui::SetNextWindowSize(ImVec2(App->camera->screenWidth / 2, consoleHeight), ImGuiCond_FirstUseEver);
+		ImGui::SetNextWindowPos(ImVec2(App->camera->screenWidth / 4, App->camera->screenHeight - consoleHeight));
+		ImGui::SetNextWindowSize(ImVec2(App->camera->screenWidth / 2, consoleHeight));
 
 		console.Draw("Console");
 
-		ImGui::SetNextWindowPos(ImVec2(0, mainMenuSize.y), ImGuiCond_FirstUseEver);
-		ImGui::SetNextWindowSize(ImVec2(App->camera->screenWidth / 4, (App->camera->screenHeight - mainMenuSize.y)/2), ImGuiCond_FirstUseEver);
+		ImGui::SetNextWindowPos(ImVec2(0, mainMenuSize.y));
+		ImGui::SetNextWindowSize(ImVec2(App->camera->screenWidth / 4, (App->camera->screenHeight - mainMenuSize.y)/2));
 		bool obert = true;
 		ImGui::Begin("Properties", &obert);
 			
@@ -177,8 +177,8 @@ update_status ModuleMenu::Update() {
 
 		ImGui::End();
 
-		ImGui::SetNextWindowPos(ImVec2(0, (App->camera->screenHeight - mainMenuSize.y) / 2), ImGuiCond_FirstUseEver);
-		ImGui::SetNextWindowSize(ImVec2(App->camera->screenWidth / 4, (App->camera->screenHeight - mainMenuSize.y) / 2 + mainMenuSize.y), ImGuiCond_FirstUseEver);
+		ImGui::SetNextWindowPos(ImVec2(0, (App->camera->screenHeight - mainMenuSize.y) / 2));
+		ImGui::SetNextWindowSize(ImVec2(App->camera->screenWidth / 4, (App->camera->screenHeight - mainMenuSize.y) / 2 + mainMenuSize.y));
 		ImGui::Begin("Configuration", &obert);
 
 		if (ImGui::CollapsingHeader("Input"))
