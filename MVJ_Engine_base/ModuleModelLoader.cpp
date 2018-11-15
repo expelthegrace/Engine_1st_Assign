@@ -121,12 +121,12 @@ void ModuleModelLoader::GenerateMaterials(const aiScene* scene)
 bool ModuleModelLoader::LoadNewModel(char* path) {
 
 	if (modelLoaded) {
-		delete vbos;
-		delete ibos;
-		delete textures;
-		delete materials;
-		delete numVerticesMesh;
-		delete numIndexesMesh;
+		delete[] vbos;
+		delete[] ibos;
+		delete[] textures;
+		delete[] materials;
+		delete[] numVerticesMesh;
+		delete[] numIndexesMesh;
 	}
 
 	numVertices = 0;

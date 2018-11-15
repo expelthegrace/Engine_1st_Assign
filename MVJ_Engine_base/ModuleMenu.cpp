@@ -24,6 +24,8 @@ ModuleMenu::~ModuleMenu()
 }
 
 bool ModuleMenu::Init() {
+	b = new char[50];
+
 	// Setup window
 	ImGui::CreateContext();
 	ImGui_ImplSDL2_InitForOpenGL(App->window->window, App->renderer->context);

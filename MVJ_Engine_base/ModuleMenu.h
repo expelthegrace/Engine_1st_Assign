@@ -61,7 +61,7 @@ public:
 	PROCESS_MEMORY_COUNTERS pmc;
 	MEMORYSTATUSEX memInfo;
 
-	char* b = new char[50];
+	char* b;
 	bool showWindows;
 
 private:
