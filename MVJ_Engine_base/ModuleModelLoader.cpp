@@ -6,7 +6,6 @@
 #include "ModuleTextures.h"
 #include "ModuleCamera.h"
 
-
 ModuleModelLoader::ModuleModelLoader()
 {
 }
@@ -14,6 +13,88 @@ ModuleModelLoader::ModuleModelLoader()
 
 ModuleModelLoader::~ModuleModelLoader()
 {
+}
+
+
+bool ModuleModelLoader::LoadBuffers(const aiScene* sceneActual, Mesh & mesh, int idMesh) {
+	const aiMesh* src_mesh = sceneActual->mMeshes[idMesh];
+
+	mesh.numVertices = src_mesh->mNumVertices;
+	mesh.numFaces = src_mesh->mNumFaces;
+
+	unsigned* vboActual = &mesh.vbo;
+
+	glGenBuffers(1, vboActual);
+	glBindBuffer(GL_ARRAY_BUFFER, *vboActual);
+
+	// Positions
+
+	glBufferData(GL_ARRAY_BUFFER, (sizeof(float) * 3 + sizeof(float) * 2)*src_mesh->mNumVertices, nullptr, GL_STATIC_DRAW);
+	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(float) * 3 * src_mesh->mNumVertices, src_mesh->mVertices);
+
+	math::float2* texture_coords = (math::float2*)glMapBufferRange(GL_ARRAY_BUFFER, sizeof(float) * 3 * src_mesh->mNumVertices,
+		sizeof(float) * 2 * src_mesh->mNumVertices, GL_MAP_WRITE_BIT);
+	for (unsigned i = 0; i < src_mesh->mNumVertices; ++i)
+	{
+		texture_coords[i] = math::float2(src_mesh->mTextureCoords[0][i].x, src_mesh->mTextureCoords[0][i].y);
+	}
+
+	glUnmapBuffer(GL_ARRAY_BUFFER);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	unsigned* iboActual = &mesh.ibo;
+
+	glGenBuffers(1, iboActual);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, *iboActual);
+
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned)*src_mesh->mNumFaces * 3, nullptr, GL_STATIC_DRAW);
+
+	unsigned* indices = (unsigned*)glMapBufferRange(GL_ELEMENT_ARRAY_BUFFER, 0,
+		sizeof(unsigned)*src_mesh->mNumFaces * 3, GL_MAP_WRITE_BIT);
+
+	for (unsigned i = 0; i < src_mesh->mNumFaces; ++i)
+	{
+		assert(src_mesh->mFaces[i].mNumIndices == 3);
+
+		*(indices++) = src_mesh->mFaces[i].mIndices[0];
+		*(indices++) = src_mesh->mFaces[i].mIndices[1];
+		*(indices++) = src_mesh->mFaces[i].mIndices[2];
+	}
+
+	glUnmapBuffer(GL_ELEMENT_ARRAY_BUFFER);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+	mesh.materialIndex = src_mesh->mMaterialIndex;
+	mesh.numVertices = src_mesh->mNumVertices;
+	mesh.numFaces = src_mesh->mNumFaces;
+
+	sprintf(b, ">Mesh loaded \n");	
+	App->menu->console.AddLog(b);
+	sprintf(b, "Number of vertices: %u \n", mesh.numVertices);
+	App->menu->console.AddLog(b);
+	sprintf(b, "Number of faces: %u \n", mesh.numFaces);
+	App->menu->console.AddLog(b);
+	
+}
+
+Mesh ModuleModelLoader::GenerateMesh(int idMesh, const char* path) {
+	Mesh mesh;
+	const aiScene* sceneAct = aiImportFile(path, aiProcess_Triangulate);
+	const char* errorMesage;
+
+	sprintf(b, "Loading model with path: %s \n", path);
+	App->menu->console.AddLog(b);
+
+
+	if (scene == nullptr) {
+		errorMesage = aiGetErrorString();
+		sprintf(b, "Error loading model: %s", errorMesage);
+		App->menu->console.AddLog(b);
+		mesh.numVertices = 0;
+	}
+	else LoadBuffers(sceneAct,mesh, idMesh);
+
+	return mesh;
 }
 
 
@@ -186,6 +267,8 @@ bool ModuleModelLoader::LoadNewModel(char* path) {
 
 }
 
+
+
 bool ModuleModelLoader::Init() {
 	modelLoaded = false;
 	LoadNewModel("BakerHouse.fbx");
@@ -194,7 +277,12 @@ bool ModuleModelLoader::Init() {
 }
 
 bool ModuleModelLoader::CleanUp() {
-
+	delete[] vbos;
+	delete[] ibos;
+	delete[] textures;
+	delete[] materials;
+	delete[] numVerticesMesh;
+	delete[] numIndexesMesh;
 
 	aiDetachAllLogStreams();
 	return true;

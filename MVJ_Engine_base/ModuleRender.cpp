@@ -9,6 +9,7 @@
 #include "ModuleModelLoader.h"
 #include "ModuleProgram.h"
 #include "ModuleCamera.h"
+#include "ComponentMesh.h"
 
 ModuleRender::ModuleRender()
 {
@@ -17,6 +18,25 @@ ModuleRender::ModuleRender()
 // Destructor
 ModuleRender::~ModuleRender()
 {
+}
+
+
+ComponentMesh* ModuleRender::CreateComponentMesh() {
+
+	ComponentMesh* meshComp = new ComponentMesh;
+	meshComponents.push_back(meshComp);
+	return meshComp;
+}
+
+ComponentMesh* ModuleRender::CreateComponentMesh(int idMesh, char* path) {
+	ComponentMesh* meshComp = new ComponentMesh;
+
+	Mesh meshAux = App->modelLoader->GenerateMesh(idMesh, path);
+	if (meshAux.numVertices > 0) (*meshComp).mesh = meshAux;
+	else meshComp->avaliable = false;
+
+	meshComponents.push_back(meshComp);
+	return meshComp;
 }
 
 // Called before render is available
@@ -156,6 +176,8 @@ update_status ModuleRender::PostUpdate()
 // Called before quitting
 bool ModuleRender::CleanUp()
 {
+	for (int i = 0; i < meshComponents.size(); ++i)	delete meshComponents[i];
+	
 	LOG("Destroying renderer");
 	SDL_GL_DeleteContext(context);
 

@@ -1,11 +1,16 @@
-#pragma once
+#ifndef _MODULERENDER_
+#define _MODULERENDER_
+
 #include "Module.h"
 #include "Globals.h"
 #include "MathGeoLib.h"
+#include <vector>
 
 struct SDL_Texture;
 struct SDL_Renderer;
 struct SDL_Rect;
+
+class ComponentMesh;
 
 class ModuleRender : public Module
 {
@@ -20,11 +25,17 @@ public:
 	bool CleanUp();
 	void WindowResized(unsigned width, unsigned height);
 
+	ComponentMesh* CreateComponentMesh();
+	ComponentMesh* CreateComponentMesh(int idMesh, char* path);
+
 	math::float4x4 model; 
 
 	bool renderTexture, showGrid;
 
 	void* context;
+
 private:
-	
+	std::vector<ComponentMesh*> meshComponents;
 };
+
+#endif
