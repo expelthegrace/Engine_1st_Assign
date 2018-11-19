@@ -9,9 +9,13 @@ class GameObject;
 class Component
 {
 public:
-	Component();
+	Component() {
 
-	virtual ~Component();
+	}
+
+	virtual ~Component() {
+
+	}
 
 	virtual void Enable() {}
 	virtual void Disable() {}
@@ -22,7 +26,7 @@ public:
 public:
 	type_comp type;
 	bool active;
-	GameObject* parent;
+	GameObject* my_go;
 
 };
 

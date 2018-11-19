@@ -75,6 +75,7 @@ bool ModuleModelLoader::LoadBuffers(const aiScene* sceneActual, Mesh & mesh, int
 	sprintf(b, "Number of faces: %u \n", mesh.numFaces);
 	App->menu->console.AddLog(b);
 	
+	return true;
 }
 
 Mesh ModuleModelLoader::GenerateMesh(int idMesh, const char* path) {

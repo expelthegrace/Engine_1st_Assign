@@ -3,6 +3,7 @@
 
 #include "Component.h"
 
+class GameObject;
 
 struct Mesh {
 
@@ -20,8 +21,11 @@ class ComponentMesh :
 	public Component
 {
 public:
-	ComponentMesh();
+	ComponentMesh( GameObject* my_go);
+	ComponentMesh(GameObject* my_go, const Mesh& mesh);
 	~ComponentMesh();
+
+	update_status Update() override;
 
 
 public:

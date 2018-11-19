@@ -10,6 +10,7 @@
 #include "ModuleProgram.h"
 #include "ModuleCamera.h"
 #include "ComponentMesh.h"
+#include "GameObject.h"
 
 ModuleRender::ModuleRender()
 {
@@ -21,17 +22,18 @@ ModuleRender::~ModuleRender()
 }
 
 
-ComponentMesh* ModuleRender::CreateComponentMesh() {
+ComponentMesh* ModuleRender::CreateComponentMesh( GameObject* my_go) {
 
-	ComponentMesh* meshComp = new ComponentMesh;
+	ComponentMesh* meshComp = new ComponentMesh(my_go);
 	meshComponents.push_back(meshComp);
 	return meshComp;
 }
 
-ComponentMesh* ModuleRender::CreateComponentMesh(int idMesh, char* path) {
-	ComponentMesh* meshComp = new ComponentMesh;
-
+ComponentMesh* ModuleRender::CreateComponentMesh(GameObject* my_go,int idMesh, char* path) {
+	
 	Mesh meshAux = App->modelLoader->GenerateMesh(idMesh, path);
+	ComponentMesh* meshComp = new ComponentMesh(my_go,meshAux);
+
 	if (meshAux.numVertices > 0) (*meshComp).mesh = meshAux;
 	else meshComp->avaliable = false;
 
